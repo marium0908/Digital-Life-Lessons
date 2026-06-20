@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-white: #ffffff;
+  --color-brand-charcoal: #242424;
+  --color-brand-steel: #5C7C89;
+  --color-brand-ocean: #1F4959;
+  --color-brand-midnight: #011425;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+/* Print styles for high-fidelity PDF exports */
+@media print {
+  body, html, #root {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #000000 !important;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif !important;
+  }
+  
+  /* Hide interactive, secondary or background chrome elements */
+  nav, footer, .no-print, button, form, .comment-section, .recommendations-section, .author-sidebar {
+    display: none !important;
+  }
+  
+  /* Reset container layout boundaries for print width allocation */
+  .print-only-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .print-only-container img {
+    max-height: 250px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+    margin-bottom: 1.5rem !important;
+    border-radius: 8px !important;
+  }
+
+  .print-narrative p {
+    font-size: 12pt !important;
+    line-height: 1.6 !important;
+    color: #111111 !important;
+    margin-bottom: 1.25rem !important;
+    page-break-inside: avoid !important;
+  }
+
+  h1 {
+    font-size: 24pt !important;
+    line-height: 1.2 !important;
+    font-weight: bold !important;
+    color: #000000 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .print-meta {
+    font-size: 9pt !important;
+    color: #555555 !important;
+    border-bottom: 1px solid #dddddd !important;
+    padding-bottom: 0.5rem !important;
+    margin-bottom: 2rem !important;
+  }
+}
