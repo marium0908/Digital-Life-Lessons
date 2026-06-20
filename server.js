@@ -54,22 +54,32 @@ app.use('/api', ensureDbReady);
 
 // MongoDB connection setup
 const PORTFOLIO_URI = "mongodb+srv://DigitalLifeLessons:x0nx8sifjkCwtGwd@portfolio.65qff4k.mongodb.net/digital_life_lessons?appName=portfolio";
-let MONGODB_URI = process.env.MONGODB_URI || PORTFOLIO_URI;
+let MONGODB_URI = process.env.MONGODB_URI;
 
-// If a system-provided template URI is injected but is not your specific cluster, 
-// preserve your personal database connection so it connects directly to your Atlas DB!
-if (!MONGODB_URI.includes("portfolio.65qff4k.mongodb.net") && !MONGODB_URI.includes("digital_life_lessons")) {
+// Sanitize connection URI: strip surrounding whitespace and quotes if present
+if (MONGODB_URI) {
+  MONGODB_URI = MONGODB_URI.trim();
+  if (MONGODB_URI.startsWith('"') && MONGODB_URI.endsWith('"')) {
+    MONGODB_URI = MONGODB_URI.slice(1, -1);
+  } else if (MONGODB_URI.startsWith("'") && MONGODB_URI.endsWith("'")) {
+    MONGODB_URI = MONGODB_URI.slice(1, -1);
+  }
+  MONGODB_URI = MONGODB_URI.trim();
+}
+
+// If a custom developer-defined database URI is present, we preserve and prioritize it 100%!
+// If it is missing or points to a standard template localhost, we use the portfolio cluster.
+const isCustomDevUri = MONGODB_URI && 
+  !MONGODB_URI.includes("localhost") && 
+  !MONGODB_URI.includes("127.0.0.1") && 
+  MONGODB_URI.length > 5;
+
+if (!isCustomDevUri) {
   MONGODB_URI = PORTFOLIO_URI;
 }
 
-// Sanitize connection URI: strip surrounding whitespace and quotes if present
-MONGODB_URI = MONGODB_URI.trim();
-if (MONGODB_URI.startsWith('"') && MONGODB_URI.endsWith('"')) {
-  MONGODB_URI = MONGODB_URI.slice(1, -1);
-} else if (MONGODB_URI.startsWith("'") && MONGODB_URI.endsWith("'")) {
-  MONGODB_URI = MONGODB_URI.slice(1, -1);
-}
-MONGODB_URI = MONGODB_URI.trim();
+const maskedUri = MONGODB_URI.replace(/:([^:@\/\?]+)@/, ':******@');
+console.log(`[DATABASE STARTUP] Targeting ${isCustomDevUri ? 'custom user-configured MONGODB_URI' : 'shared portfolio DB'} connection: ${maskedUri}`);
 
 // Enable command buffering (standard Mongoose behavior) so cold boot or startup queries wait for the connection instead of failing instantly
 mongoose.set('bufferCommands', true);
