@@ -141,7 +141,6 @@ async function tryResolveSrvAndRewrite(uri) {
     }).join(',');
 
     // Fetch corresponding TXT records to check options (e.g. replicaSet)
-    let txtOptions = '';
     let txtRecords = [];
     try {
       txtRecords = await dns.promises.resolveTxt(host);
@@ -167,22 +166,37 @@ async function tryResolveSrvAndRewrite(uri) {
       }
     }
 
+    // Build unique query parameters using URLSearchParams
+    const searchParams = new URLSearchParams();
+    
+    // 1. Add modern default params
+    searchParams.set('ssl', 'true');
+    searchParams.set('authSource', 'admin');
+    searchParams.set('retryWrites', 'true');
+    searchParams.set('w', 'majority');
+
+    // 2. Parse and merge TXT record companion config params
     if (txtRecords && txtRecords.length > 0) {
       const flatTxt = txtRecords.flat().join('&');
       if (flatTxt) {
-        txtOptions = `&${flatTxt}`;
         console.log('[SRV RESOLVER] Found companion TXT config params:', flatTxt);
+        const txtParams = new URLSearchParams(flatTxt);
+        for (const [key, val] of txtParams.entries()) {
+          searchParams.set(key, val);
+        }
       }
     }
 
-    // Default necessary modern parameters to connect directly to replica sets
-    const defaultParams = `ssl=true&authSource=admin&retryWrites=true&w=majority`;
-    let finalOptions = `?${defaultParams}${txtOptions}`;
+    // 3. Parse and merge original URI custom options (e.g. appName)
     if (options && options.startsWith('?')) {
-      finalOptions += `&${options.slice(1)}`;
+      const origParams = new URLSearchParams(options.slice(1));
+      for (const [key, val] of origParams.entries()) {
+        searchParams.set(key, val);
+      }
     }
 
-    const rewrittenUri = `mongodb://${user}:${pass}@${hostsList}${dbPath || '/'}${finalOptions}`;
+    const finalQueryString = searchParams.toString();
+    const rewrittenUri = `mongodb://${user}:${pass}@${hostsList}${dbPath || '/'}?${finalQueryString}`;
     console.log('[SRV RESOLVER] Success! MONGODB_URI rewritten from SRV format to direct node endpoints.');
     return rewrittenUri;
   } catch (err) {
