@@ -8,6 +8,15 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import dns from 'dns';
+
+// Fix for target/local systems and serverless environments getting "querySrv ECONNREFUSED"
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+  console.log('[DNS OVERRIDE] Successfully configured public Google and Cloudflare DNS resolvers.');
+} catch (dnsErr) {
+  console.warn('[DNS OVERRIDE] Unable to set custom DNS servers. Relying on default system DNS:', dnsErr.message);
+}
 
 dotenv.config();
 
@@ -15,6 +24,33 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+// Database-ready check middleware to hold incoming requests during cold starts or slower connections
+async function ensureDbReady(req, res, next) {
+  if (hasDatabaseLoaded) {
+    return next();
+  }
+
+  console.log(`[DB DELAY] Incoming request to ${req.originalUrl || req.url}. Waiting for database connection to resolve...`);
+
+  const start = Date.now();
+  const checkInterval = setInterval(() => {
+    if (hasDatabaseLoaded) {
+      clearInterval(checkInterval);
+      console.log(`[DB DELAY] Database resolved after ${Date.now() - start}ms. Continuing request.`);
+      return next();
+    }
+
+    if (Date.now() - start > 4000) {
+      clearInterval(checkInterval);
+      console.log('[DB DELAY] Max wait exceeded. Bootstrapping fallback database and continuing.');
+      setupMemoryFallback();
+      return next();
+    }
+  }, 100);
+}
+
+app.use('/api', ensureDbReady);
 
 // MongoDB connection setup
 const PORTFOLIO_URI = "mongodb+srv://DigitalLifeLessons:x0nx8sifjkCwtGwd@portfolio.65qff4k.mongodb.net/digital_life_lessons?appName=portfolio";
@@ -35,8 +71,8 @@ if (MONGODB_URI.startsWith('"') && MONGODB_URI.endsWith('"')) {
 }
 MONGODB_URI = MONGODB_URI.trim();
 
-// Disable command buffering globally so queries fail instantly instead of hanging on slow/blocked connections
-mongoose.set('bufferCommands', false);
+// Enable command buffering (standard Mongoose behavior) so cold boot or startup queries wait for the connection instead of failing instantly
+mongoose.set('bufferCommands', true);
 
 let hasDatabaseLoaded = false;
 let isMemoryDatabase = false;
@@ -45,18 +81,18 @@ let connectedDbName = null;
 let connectedDbHost = null;
 let existingCollections = [];
 
-// Proactive 10-second race timeout: if Atlas connection hangs (e.g., local IP not whitelisted), fall back immediately
+// Proactive 4-second race timeout: if Atlas connection hangs (e.g., local IP not whitelisted), fall back immediately
 const fallbackTimer = setTimeout(() => {
   if (!hasDatabaseLoaded) {
-    console.log('[LOCAL FALLBACK TIMER] MongoDB connection taking too long (>10s). Swapping with robust in-memory store for instant response!');
-    lastDbError = new Error('Connection timed out after 10000ms');
+    console.log('[LOCAL FALLBACK TIMER] MongoDB connection taking too long (>4s). Swapping with robust in-memory store for instant response!');
+    lastDbError = new Error('Connection timed out after 4000ms');
     setupMemoryFallback();
   }
-}, 10000);
+}, 4000);
 
 mongoose.connect(MONGODB_URI, {
-  serverSelectionTimeoutMS: 10000,
-  connectTimeoutMS: 10000
+  serverSelectionTimeoutMS: 4000,
+  connectTimeoutMS: 4000
 })
   .then(() => {
     clearTimeout(fallbackTimer);
@@ -540,7 +576,7 @@ function createMockModel(dataList, modelName) {
   return MockInstance;
 }
 
-const setupMemoryFallback = () => {
+function setupMemoryFallback() {
   if (isMemoryDatabase) return;
   isMemoryDatabase = true;
   console.log('[LOCAL FALLBACK] Database Connection failed or timed out. Swapping with a robust in-memory datastore to ensure 100% operation on localhost!');
@@ -549,7 +585,7 @@ const setupMemoryFallback = () => {
   MongoFavorite = createMockModel(defaultFavorites, 'Favorite');
   MongoComment = createMockModel(defaultComments, 'Comment');
   MongoReport = createMockModel(defaultReports, 'Report');
-};
+}
 
 // --- Seeding Database Function ---
 async function seedDatabase() {
