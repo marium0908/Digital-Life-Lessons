@@ -10,14 +10,6 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import dns from 'dns';
 
-// Fix for target/local systems and serverless environments getting "querySrv ECONNREFUSED"
-try {
-  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
-  console.log('[DNS OVERRIDE] Successfully configured public Google and Cloudflare DNS resolvers.');
-} catch (dnsErr) {
-  console.warn('[DNS OVERRIDE] Unable to set custom DNS servers. Relying on default system DNS:', dnsErr.message);
-}
-
 dotenv.config();
 
 const app = express();
@@ -53,7 +45,7 @@ async function ensureDbReady(req, res, next) {
 app.use('/api', ensureDbReady);
 
 // MongoDB connection setup
-const PORTFOLIO_URI = "mongodb+srv://DigitalLifeLessons:x0nx8sifjkCwtGwd@portfolio.65qff4k.mongodb.net/digital_life_lessons?appName=portfolio";
+const PORTFOLIO_URI = "mongodb+srv://DigitalLifeLessons:x0nx8sifjkCwtGwd@portfolio.65qff4k.mongodb.net/digital_life_lessons?appName=digital_life_lessons";
 let MONGODB_URI = process.env.MONGODB_URI;
 
 // Sanitize connection URI: strip surrounding whitespace and quotes if present
@@ -91,19 +83,138 @@ let connectedDbName = null;
 let connectedDbHost = null;
 let existingCollections = [];
 
-// Proactive 4-second race timeout: if Atlas connection hangs (e.g., local IP not whitelisted), fall back immediately
+async function tryResolveSrvAndRewrite(uri) {
+  if (!uri || !uri.startsWith('mongodb+srv://')) {
+    return uri;
+  }
+
+  try {
+    console.log('[SRV RESOLVER] DNS-over-SRV lookup triggered to solve "querySrv" issues on serverless/local environments.');
+    
+    // Parse: mongodb+srv://<user>:<pass>@<host>/<database>?<options>
+    const match = uri.match(/^mongodb\+srv:\/\/([^:]+):([^@]+)@([^/?#]+)([^?#]*)(.*)$/);
+    if (!match) return uri;
+
+    const [_, user, pass, host, dbPath, options] = match;
+    const srvRecordName = `_mongodb._tcp.${host}`;
+
+    let srvRecords = [];
+    try {
+      // Try resolving SRV records using standard Node DNS service
+      srvRecords = await dns.promises.resolveSrv(srvRecordName);
+    } catch (nodeDnsErr) {
+      console.log(`[SRV RESOLVER] Node DNS lookup failed (${nodeDnsErr.message}). Attempting secure DNS-over-HTTPS (DoH) via Google API over Port 443...`);
+      try {
+        const dohUrl = `https://dns.google/resolve?name=${encodeURIComponent(srvRecordName)}&type=SRV`;
+        const resp = await fetch(dohUrl);
+        if (!resp.ok) throw new Error(`Google DoH returned status ${resp.status}`);
+        const resJson = await resp.json();
+        if (resJson.Answer && resJson.Answer.length > 0) {
+          srvRecords = resJson.Answer.map(ans => {
+            // Extract priority weight port host: "0 0 27017 portfolio-shard-00-01.65qff4k.mongodb.net."
+            const parts = String(ans.data).trim().split(/\s+/);
+            if (parts.length >= 4) {
+              const port = parseInt(parts[2], 10) || 27017;
+              let name = parts[3];
+              if (name && name.endsWith('.')) {
+                name = name.slice(0, -1);
+              }
+              return { name, port };
+            }
+            return null;
+          }).filter(Boolean);
+        }
+      } catch (dohErr) {
+        console.warn(`[SRV RESOLVER] DNS-over-HTTPS SRV query failed too: ${dohErr.message}`);
+      }
+    }
+
+    if (!srvRecords || srvRecords.length === 0) {
+      throw new Error(`Zero SRV records resolved for ${srvRecordName}`);
+    }
+
+    console.log(`[SRV RESOLVER] Successfully fetched ${srvRecords.length} host targets:`);
+    const hostsList = srvRecords.map(r => {
+      const hostname = r.name.endsWith('.') ? r.name.slice(0, -1) : r.name;
+      console.log(` -> Target: ${hostname}:${r.port}`);
+      return `${hostname}:${r.port}`;
+    }).join(',');
+
+    // Fetch corresponding TXT records to check options (e.g. replicaSet)
+    let txtOptions = '';
+    let txtRecords = [];
+    try {
+      txtRecords = await dns.promises.resolveTxt(host);
+    } catch (nodeTxtErr) {
+      console.log(`[SRV RESOLVER] Node TXT lookup failed (${nodeTxtErr.message}). Attempting secure DNS-over-HTTPS (DoH) via Google API over Port 443...`);
+      try {
+        const dohUrl = `https://dns.google/resolve?name=${encodeURIComponent(host)}&type=TXT`;
+        const resp = await fetch(dohUrl);
+        if (resp.ok) {
+          const resJson = await resp.json();
+          if (resJson.Answer && resJson.Answer.length > 0) {
+            txtRecords = resJson.Answer.map(ans => {
+              let txtStr = String(ans.data).trim();
+              if (txtStr.startsWith('"') && txtStr.endsWith('"')) {
+                txtStr = txtStr.slice(1, -1);
+              }
+              return [txtStr];
+            });
+          }
+        }
+      } catch (dohTxtErr) {
+        console.warn(`[SRV RESOLVER] DNS-over-HTTPS TXT query failed: ${dohTxtErr.message}`);
+      }
+    }
+
+    if (txtRecords && txtRecords.length > 0) {
+      const flatTxt = txtRecords.flat().join('&');
+      if (flatTxt) {
+        txtOptions = `&${flatTxt}`;
+        console.log('[SRV RESOLVER] Found companion TXT config params:', flatTxt);
+      }
+    }
+
+    // Default necessary modern parameters to connect directly to replica sets
+    const defaultParams = `ssl=true&authSource=admin&retryWrites=true&w=majority`;
+    let finalOptions = `?${defaultParams}${txtOptions}`;
+    if (options && options.startsWith('?')) {
+      finalOptions += `&${options.slice(1)}`;
+    }
+
+    const rewrittenUri = `mongodb://${user}:${pass}@${hostsList}${dbPath || '/'}${finalOptions}`;
+    console.log('[SRV RESOLVER] Success! MONGODB_URI rewritten from SRV format to direct node endpoints.');
+    return rewrittenUri;
+  } catch (err) {
+    console.warn('[SRV RESOLVER] DNS-over-SRV rewrite bypassed or failed:', err.message);
+    return uri;
+  }
+}
+
+// Proactive 12-second race timeout: if Atlas connection hangs (e.g., local IP not whitelisted), fall back immediately
 const fallbackTimer = setTimeout(() => {
   if (!hasDatabaseLoaded) {
-    console.log('[LOCAL FALLBACK TIMER] MongoDB connection taking too long (>4s). Swapping with robust in-memory store for instant response!');
-    lastDbError = new Error('Connection timed out after 4000ms');
+    console.log('[LOCAL FALLBACK TIMER] MongoDB connection taking too long (>12s). Swapping with robust in-memory store for instant response!');
+    lastDbError = new Error('Connection timed out after 12000ms');
     setupMemoryFallback();
   }
-}, 4000);
+}, 12000);
 
-mongoose.connect(MONGODB_URI, {
-  serverSelectionTimeoutMS: 4000,
-  connectTimeoutMS: 4000
-})
+tryResolveSrvAndRewrite(MONGODB_URI)
+  .then(finalUri => {
+    console.log(`[DATABASE STARTUP] Connecting to rewritten URI...`);
+    return mongoose.connect(finalUri, {
+      serverSelectionTimeoutMS: 12000,
+      connectTimeoutMS: 12000
+    });
+  })
+  .catch(err => {
+    console.warn('[DATABASE STARTUP] Rewritten URI connection failed, trying raw URI direct connection:', err.message);
+    return mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 12000,
+      connectTimeoutMS: 12000
+    });
+  })
   .then(() => {
     clearTimeout(fallbackTimer);
     hasDatabaseLoaded = true;
