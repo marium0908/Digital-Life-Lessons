@@ -505,7 +505,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 x2={width - paddingRight} 
                 y2={y} 
                 stroke="currentColor" 
-                className="text-slate-100 dark:text-zinc-800" 
+                className="text-brand-steel/10 dark:text-brand-steel/10" 
                 strokeDasharray="4,4" 
               />
             );
@@ -525,7 +525,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 cy={p.y} 
                 r="4.5" 
                 fill={color} 
-                className="stroke-white dark:stroke-zinc-900" 
+                className="stroke-brand-white dark:stroke-brand-charcoal" 
                 strokeWidth="2"
               />
               
@@ -535,7 +535,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   x={p.x} 
                   y={p.y - 10} 
                   textAnchor="middle"
-                  className="text-[10px] font-mono font-bold fill-current text-slate-700 dark:fill-zinc-300"
+                  className="text-[10px] font-mono font-bold fill-current text-brand-charcoal dark:fill-brand-white"
                 >
                   {p.val}
                 </text>
@@ -546,7 +546,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 x={p.x} 
                 y={height - 8} 
                 textAnchor="middle" 
-                className="text-[10px] font-mono fill-current text-slate-400 dark:fill-zinc-500 font-semibold"
+                className="text-[10px] font-mono fill-current text-brand-steel font-semibold"
               >
                 {p.label}
               </text>
@@ -576,9 +576,9 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold truncate">{user?.name}</p>
                 <div className="flex items-center gap-1 mt-0.5">
-                  <span className={`inline-flex px-1.5 py-0.5 text-[9px] font-mono font-bold rounded ${
+                  <span className={`inline-flex items-center px-1.5 py-0.5 text-[9px] font-mono font-bold rounded border ${
                     user?.role === 'admin' 
-                      ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                      ? 'bg-brand-ocean/15 text-brand-ocean dark:bg-brand-steel/20 dark:text-brand-steel border-brand-ocean/15 dark:border-brand-steel/15'
                       : isPremiumUser ? 'bg-brand-ocean/15 text-brand-ocean dark:bg-brand-steel/20 dark:text-brand-steel' : 'bg-slate-100 text-slate-500 dark:bg-zinc-800'
                   }`}>
                     {user?.role === 'admin' ? 'Admin Operator' : isPremiumUser ? 'Premium' : 'Free Plan'}
@@ -1527,22 +1527,22 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   
                   <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm">
                     <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Total User base</p>
-                    <p className="text-3xl font-bold font-mono mt-2">{adminStats.totalUsers}</p>
+                    <p className="text-3xl font-bold font-mono mt-2 text-brand-charcoal dark:text-brand-white">{adminStats.totalUsers}</p>
                   </div>
 
                   <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm">
                     <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Live Public Lessons</p>
-                    <p className="text-3xl font-bold font-mono mt-2">{adminStats.totalPublicLessons}</p>
+                    <p className="text-3xl font-bold font-mono mt-2 text-brand-charcoal dark:text-brand-white">{adminStats.totalPublicLessons}</p>
                   </div>
 
                   <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm">
                     <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Flagged Disputes</p>
-                    <p className="text-3xl font-bold font-mono mt-2 text-rose-500">{adminStats.totalReports}</p>
+                    <p className="text-3xl font-bold font-mono mt-2 text-brand-charcoal dark:text-brand-white">{adminStats.totalReports}</p>
                   </div>
 
                   <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm">
                     <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Added Today</p>
-                    <p className="text-3xl font-bold font-mono mt-2 text-brand-ocean dark:text-brand-steel">{adminStats.todaysLessons}</p>
+                    <p className="text-3xl font-bold font-mono mt-2 text-brand-charcoal dark:text-brand-white">{adminStats.todaysLessons}</p>
                   </div>
 
                 </div>
@@ -1562,7 +1562,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                               <img src={c.photo} referrerPolicy="no-referrer" className="w-7 h-7 rounded-full object-cover border border-slate-200" />
                               <span className="text-xs font-bold truncate max-w-[120px] text-brand-charcoal dark:text-brand-white">{c.name}</span>
                             </div>
-                            <span className="text-[10px] font-mono font-bold text-brand-steel bg-brand-steel/10 dark:bg-brand-white/5 px-1.5 py-0.5 rounded">{c.count} publ.</span>
+                            <span className="inline-flex items-center px-2 py-0.5 text-[9px] font-bold font-mono text-brand-ocean bg-brand-ocean/10 dark:text-brand-steel dark:bg-brand-steel/15 border border-brand-ocean/20 dark:border-brand-steel/20 rounded-full shadow-xs">{c.count} publ.</span>
                           </div>
                         ))
                       ) : (
@@ -1587,7 +1587,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                       { label: 'Apr', val: 62 },
                       { label: 'May', val: 89 },
                       { label: 'Jun', val: adminStats.totalUsers || 105 }
-                    ], 'val', '#f43f5e', 'userGrowthGrad')}
+                    ], 'val', '#0ea5e9', 'userGrowthGrad')}
                   </div>
 
                   {/* Lesson Growth Chart */}
@@ -1606,7 +1606,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                       { label: 'Apr', val: 39 },
                       { label: 'May', val: 54 },
                       { label: 'Jun', val: adminStats.totalPublicLessons || 75 }
-                    ], 'val', '#6366f1', 'lessonGrowthGrad')}
+                    ], 'val', '#38bdf8', 'lessonGrowthGrad')}
                   </div>
 
                 </div>
@@ -1723,11 +1723,11 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   <div className="bg-slate-50/50 dark:bg-brand-midnight border border-brand-steel/20 rounded-2xl p-4 flex items-center justify-between">
                     <div>
                       <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Flagged Content</p>
-                      <p className="text-2xl font-bold font-mono mt-1 text-rose-500">
+                      <p className="text-2xl font-bold font-mono mt-1 text-brand-charcoal dark:text-brand-white">
                         {new Set(adminReports.map(r => r.lessonId)).size}
                       </p>
                     </div>
-                    <Flag className="w-8 h-8 text-rose-500/20" />
+                    <Flag className="w-8 h-8 text-brand-ocean/20 dark:text-brand-steel/30" />
                   </div>
                 </div>
 
@@ -1813,12 +1813,12 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                           {filteredAdminLessons.map((l) => {
                             const hasFlag = adminReports.some(r => r.lessonId === l.id);
                             return (
-                              <tr key={l.id} className={`hover:bg-brand-steel/5 transition-colors ${hasFlag ? 'bg-rose-500/5 hover:bg-rose-500/10' : ''}`}>
+                              <tr key={l.id} className={`hover:bg-brand-steel/5 transition-colors ${hasFlag ? 'bg-brand-ocean/5 hover:bg-brand-ocean/10' : ''}`}>
                                 <td className="py-4 px-4 flex-1">
                                   <div className="flex items-center gap-1.5">
                                     <p className="font-bold line-clamp-1 text-brand-charcoal dark:text-brand-white">{l.title}</p>
                                     {hasFlag && (
-                                      <span className="px-1.5 py-0.5 text-[8px] font-mono font-bold bg-rose-500 text-white rounded animate-pulse">FLAGGED</span>
+                                      <span className="px-1.5 py-0.5 text-[8px] font-mono font-bold bg-brand-ocean/20 text-brand-ocean dark:bg-brand-steel/30 dark:text-brand-steel rounded border border-brand-ocean/30 dark:border-brand-steel/30 animate-pulse">FLAGGED</span>
                                     )}
                                   </div>
                                   <p className="text-[10px] text-brand-steel font-mono">By: {l.creatorName}</p>
@@ -1936,10 +1936,10 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                           {groupedReports.map((g) => {
                             const latestReason = g.reports[g.reports.length - 1]?.reason || 'Flagged';
                             return (
-                              <tr key={g.lessonId} className="hover:bg-rose-500/5 transition-colors">
+                              <tr key={g.lessonId} className="hover:bg-brand-steel/5 transition-colors">
                                 <td className="py-4 px-4 font-bold max-w-[200px] truncate text-brand-charcoal dark:text-brand-white">{g.lessonTitle || 'Untitled Publication'}</td>
                                 <td className="py-4 px-4 text-center">
-                                  <span className="inline-flex items-center px-2.5 py-0.5 text-[10px] font-bold font-mono rounded-full bg-rose-500/10 text-rose-600 border border-rose-500/25 shadow-xs">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 text-[10px] font-bold font-mono rounded-full bg-brand-ocean/10 text-brand-ocean dark:bg-brand-steel/15 dark:text-brand-steel border border-brand-ocean/20 dark:border-brand-steel/20 shadow-xs">
                                     {g.reports.length} Flags
                                   </span>
                                 </td>
@@ -1995,20 +1995,20 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
               >
                 {/* Admin Role Badge & Info Block */}
                 <div className="md:col-span-1 space-y-6">
-                  <div className="bg-gradient-to-br from-rose-500 to-red-600 rounded-3xl p-6 text-white text-center shadow-lg relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full translate-x-12 -translate-y-12" />
+                  <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 text-brand-charcoal dark:text-brand-white text-center shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-brand-steel/5 rounded-full translate-x-12 -translate-y-12" />
                     
                     <img
                       src={profilePhoto || user?.photoURL}
                       alt={user?.name}
-                      className="w-20 h-20 rounded-full mx-auto object-cover border-4 border-white/20 shadow-md mb-4"
+                      className="w-20 h-20 rounded-full mx-auto object-cover border-4 border-brand-steel/20 shadow-sm mb-4"
                       referrerPolicy="no-referrer"
                     />
                     
-                    <h3 className="font-bold text-lg font-sans line-clamp-1">{user?.name}</h3>
-                    <p className="text-xs text-white/80 font-mono mt-1 break-all">{user?.email}</p>
+                    <h3 className="font-bold text-lg font-sans line-clamp-1 text-brand-charcoal dark:text-brand-white">{user?.name}</h3>
+                    <p className="text-xs text-brand-steel dark:text-brand-steel/85 font-mono mt-1 break-all">{user?.email}</p>
                     
-                    <div className="mt-6 inline-flex px-3 py-1 bg-white/10 rounded-full text-xs font-bold font-mono tracking-wide">
+                    <div className="mt-6 inline-flex px-3 py-1 bg-brand-ocean/10 text-brand-ocean dark:bg-brand-steel/15 dark:text-brand-steel border border-brand-ocean/20 dark:border-brand-steel/25 rounded-full text-xs font-bold font-mono tracking-wide shadow-xs">
                       SYSTEM ADMIN
                     </div>
                   </div>
@@ -2019,19 +2019,19 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                     <div className="space-y-3 font-semibold text-xs">
                       <div className="flex justify-between items-center py-2 border-b border-brand-steel/10 dark:border-brand-steel/15">
                         <span className="text-slate-500">Lessons Reviewed</span>
-                        <span className="font-mono text-emerald-600 font-bold">{adminLessons.filter(l => l.isReviewed).length}</span>
+                        <span className="font-mono text-brand-charcoal dark:text-brand-white font-bold">{adminLessons.filter(l => l.isReviewed).length}</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-brand-steel/10 dark:border-brand-steel/15">
                         <span className="text-slate-500">Nominated Slides</span>
-                        <span className="font-mono text-amber-500 font-bold">{adminLessons.filter(l => l.isFeatured).length}</span>
+                        <span className="font-mono text-brand-charcoal dark:text-brand-white font-bold">{adminLessons.filter(l => l.isFeatured).length}</span>
                       </div>
                       <div className="flex justify-between items-center py-2 border-b border-brand-steel/10 dark:border-brand-steel/15">
                         <span className="text-slate-500">Total System Users</span>
-                        <span className="font-mono text-indigo-500 font-bold">{adminUsers.length || 6}</span>
+                        <span className="font-mono text-brand-charcoal dark:text-brand-white font-bold">{adminUsers.length || 6}</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
                         <span className="text-slate-500">Clearance Badge</span>
-                        <span className="font-mono text-rose-500 font-bold">Root Master</span>
+                        <span className="font-mono text-brand-charcoal dark:text-brand-white font-bold">Root Master</span>
                       </div>
                     </div>
                   </div>
@@ -2264,8 +2264,8 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
               
               <div className="space-y-3 max-h-[50vh] overflow-y-auto">
                 {activeReportDetails.map((report) => (
-                  <div key={report.id} className="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/10 space-y-1 text-xs">
-                    <p className="font-bold text-rose-600 font-sans">Option: {report.reason}</p>
+                  <div key={report.id} className="p-4 rounded-2xl bg-brand-ocean/5 border border-brand-ocean/10 space-y-1 text-xs">
+                    <p className="font-bold text-brand-ocean dark:text-brand-steel font-sans">Option: {report.reason}</p>
                     <p className="text-slate-400 font-mono text-[10px]">Reporter: {report.reporterEmail}</p>
                     <p className="text-slate-400 text-[10px] font-mono">Timestamp: {new Date(report.timestamp).toLocaleDateString()}</p>
                   </div>
