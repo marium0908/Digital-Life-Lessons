@@ -1061,7 +1061,20 @@ async function verifyToken(req, res, next) {
     return res.status(401).json({ error: 'Unauthorized: Invalid token format' });
   }
   const userId = parts[1];
-  const user = await MongoUser.findOne({ id: userId });
+  
+  let user = null;
+  try {
+    user = await MongoUser.findOne({
+      $or: [
+        { id: userId },
+        ...(mongoose?.Types?.ObjectId?.isValid(userId) ? [{ _id: new mongoose.Types.ObjectId(userId) }] : []),
+        { _id: userId }
+      ]
+    });
+  } catch (err) {
+    user = await MongoUser.findOne({ id: userId });
+  }
+
   if (!user) {
     return res.status(401).json({ error: 'Unauthorized: User not found' });
   }
@@ -1134,7 +1147,7 @@ app.post('/api/auth/register', async (req, res) => {
 
     await newUser.save();
 
-    const token = `session-token--${newUser.id}--${Date.now()}`;
+    const token = `session-token--${newUser.id || newUser._id.toString()}--${Date.now()}`;
     const userResponse = newUser.toObject();
     delete userResponse.password;
     res.json({ user: userResponse, token });
@@ -1156,7 +1169,7 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid email or password.' });
     }
 
-    const token = `session-token--${userObj.id}--${Date.now()}`;
+    const token = `session-token--${userObj.id || userObj._id.toString()}--${Date.now()}`;
     const userResponse = userObj.toObject();
     delete userResponse.password;
     res.json({ user: userResponse, token });
@@ -1216,7 +1229,7 @@ app.post('/api/auth/google-login', async (req, res) => {
 
     const userResponse = userObj.toObject();
     delete userResponse.password;
-    const token = `session-token--${userObj.id}--${Date.now()}`;
+    const token = `session-token--${userObj.id || userObj._id.toString()}--${Date.now()}`;
     res.json({ user: userResponse, token });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -1262,11 +1275,11 @@ app.put('/api/auth/profile', verifyToken, async (req, res) => {
 // 2. Stripe Checkout Integration & Simulator
 app.post('/api/create-checkout-session', verifyToken, (req, res) => {
   const user = req.user;
-  const successUrl = `${process.env.APP_URL || 'http://localhost:3000'}/payment/success?userId=${user.id}`;
-  const cancelUrl = `${process.env.APP_URL || 'http://localhost:3000'}/payment/cancel`;
+  const successUrl = `/payment/success?userId=${user.id || user._id.toString()}`;
+  const cancelUrl = `/payment/cancel`;
 
   res.json({ 
-    url: `/payment/simulate-stripe?success_url=${encodeURIComponent(successUrl)}&cancel_url=${encodeURIComponent(cancelUrl)}&userId=${user.id}`
+    url: `/payment/simulate-stripe?success_url=${encodeURIComponent(successUrl)}&cancel_url=${encodeURIComponent(cancelUrl)}&userId=${user.id || user._id.toString()}`
   });
 });
 
