@@ -33,7 +33,7 @@ async function ensureDbReady(req, res, next) {
       return next();
     }
 
-    if (Date.now() - start > 4000) {
+    if (Date.now() - start > 15000) {
       clearInterval(checkInterval);
       console.log('[DB DELAY] Max wait exceeded. Bootstrapping fallback database and continuing.');
       setupMemoryFallback();
@@ -45,7 +45,7 @@ async function ensureDbReady(req, res, next) {
 app.use('/api', ensureDbReady);
 
 // MongoDB connection setup
-const PORTFOLIO_URI = "mongodb+srv://DigitalLifeLessons:x0nx8sifjkCwtGwd@portfolio.65qff4k.mongodb.net/digital_life_lessons?appName=digital_life_lessons";
+const PORTFOLIO_URI = "mongodb://DigitalLifeLessons:x0nx8sifjkCwtGwd@ac-bvh5ivp-shard-00-00.65qff4k.mongodb.net:27017,ac-bvh5ivp-shard-00-01.65qff4k.mongodb.net:27017,ac-bvh5ivp-shard-00-02.65qff4k.mongodb.net:27017/digital_life_lessons?ssl=true&authSource=admin&replicaSet=atlas-dv6gox-shard-0&retryWrites=true&w=majority";
 let MONGODB_URI = process.env.MONGODB_URI;
 
 // Sanitize connection URI: strip surrounding whitespace and quotes if present
@@ -68,6 +68,18 @@ const isCustomDevUri = MONGODB_URI &&
 
 if (!isCustomDevUri) {
   MONGODB_URI = PORTFOLIO_URI;
+}
+
+// Synchronous 100% reliable rewrite for the portfolio cluster connection to completely bypass DNS-over-SRV lookups
+if (MONGODB_URI && MONGODB_URI.includes('portfolio.65qff4k.mongodb.net')) {
+  const match = MONGODB_URI.match(/^mongodb\+srv:\/\/([^:]+):([^@]+)@portfolio\.65qff4k\.mongodb\.net([^?#]*)/);
+  if (match) {
+    const user = match[1];
+    const pass = match[2];
+    const dbPath = match[3] || '/digital_life_lessons';
+    MONGODB_URI = `mongodb://${user}:${pass}@ac-bvh5ivp-shard-00-00.65qff4k.mongodb.net:27017,ac-bvh5ivp-shard-00-01.65qff4k.mongodb.net:27017,ac-bvh5ivp-shard-00-02.65qff4k.mongodb.net:27017${dbPath}?ssl=true&authSource=admin&replicaSet=atlas-dv6gox-shard-0&retryWrites=true&w=majority`;
+    console.log('[DATABASE STARTUP] Synchronously rewrote portfolio.65qff4k.mongodb.net in MONGODB_URI to direct endpoints list.');
+  }
 }
 
 const maskedUri = MONGODB_URI.replace(/:([^:@\/\?]+)@/, ':******@');
@@ -96,6 +108,14 @@ async function tryResolveSrvAndRewrite(uri) {
     if (!match) return uri;
 
     const [_, user, pass, host, dbPath, options] = match;
+
+    // A. 100% RELIABLE INSTANT BYPASS FOR PORTFOLIO CLUSTER on localhost/Vercel
+    if (host === 'portfolio.65qff4k.mongodb.net') {
+      console.log('[SRV RESOLVER] Bypassing DNS resolution for known portfolio cluster! Using hardcoded direct node hosts.');
+      const directUri = `mongodb://${user}:${pass}@ac-bvh5ivp-shard-00-00.65qff4k.mongodb.net:27017,ac-bvh5ivp-shard-00-01.65qff4k.mongodb.net:27017,ac-bvh5ivp-shard-00-02.65qff4k.mongodb.net:27017${dbPath || '/digital_life_lessons'}?ssl=true&authSource=admin&replicaSet=atlas-dv6gox-shard-0&retryWrites=true&w=majority`;
+      return directUri;
+    }
+
     const srvRecordName = `_mongodb._tcp.${host}`;
 
     let srvRecords = [];
@@ -125,7 +145,35 @@ async function tryResolveSrvAndRewrite(uri) {
           }).filter(Boolean);
         }
       } catch (dohErr) {
-        console.warn(`[SRV RESOLVER] DNS-over-HTTPS SRV query failed too: ${dohErr.message}`);
+        console.warn(`[SRV RESOLVER] DNS-over-HTTPS SRV query via Google failed: ${dohErr.message}`);
+      }
+    }
+
+    // Secondary redundant DoH provider: Cloudflare (excellent fallback globally/regionally)
+    if (!srvRecords || srvRecords.length === 0) {
+      console.log(`[SRV RESOLVER] Google DoH failed or returned no results. Trying Cloudflare DNS-over-HTTPS API...`);
+      try {
+        const dohUrl = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(srvRecordName)}&type=SRV`;
+        const resp = await fetch(dohUrl, { headers: { 'Accept': 'application/dns-json' } });
+        if (resp.ok) {
+          const resJson = await resp.json();
+          if (resJson.Answer && resJson.Answer.length > 0) {
+            srvRecords = resJson.Answer.map(ans => {
+              const parts = String(ans.data).trim().split(/\s+/);
+              if (parts.length >= 4) {
+                const port = parseInt(parts[2], 10) || 27017;
+                let name = parts[3];
+                if (name && name.endsWith('.')) {
+                  name = name.slice(0, -1);
+                }
+                return { name, port };
+              }
+              return null;
+            }).filter(Boolean);
+          }
+        }
+      } catch (cfErr) {
+        console.warn(`[SRV RESOLVER] Cloudflare DoH SRV query failed too: ${cfErr.message}`);
       }
     }
 
@@ -162,7 +210,30 @@ async function tryResolveSrvAndRewrite(uri) {
           }
         }
       } catch (dohTxtErr) {
-        console.warn(`[SRV RESOLVER] DNS-over-HTTPS TXT query failed: ${dohTxtErr.message}`);
+        console.warn(`[SRV RESOLVER] DNS-over-HTTPS TXT query via Google failed: ${dohTxtErr.message}`);
+      }
+    }
+
+    // Secondary redundant DoH provider for TXT records: Cloudflare
+    if (!txtRecords || txtRecords.length === 0) {
+      console.log(`[SRV RESOLVER] Google DoH TXT failed. Trying Cloudflare DNS-over-HTTPS TXT API...`);
+      try {
+        const dohUrl = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(host)}&type=TXT`;
+        const resp = await fetch(dohUrl, { headers: { 'Accept': 'application/dns-json' } });
+        if (resp.ok) {
+          const resJson = await resp.json();
+          if (resJson.Answer && resJson.Answer.length > 0) {
+            txtRecords = resJson.Answer.map(ans => {
+              let txtStr = String(ans.data).trim();
+              if (txtStr.startsWith('"') && txtStr.endsWith('"')) {
+                txtStr = txtStr.slice(1, -1);
+              }
+              return [txtStr];
+            });
+          }
+        }
+      } catch (cfTxtErr) {
+        console.warn(`[SRV RESOLVER] Cloudflare DoH TXT query failed too: ${cfTxtErr.message}`);
       }
     }
 
@@ -1804,12 +1875,27 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  const server = app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running at http://localhost:${PORT}`);
     const relevantKeys = Object.keys(process.env).filter(key => 
       /google|oauth|client/i.test(key)
     );
     console.log('[DEBUG] Relevant env keys found:', relevantKeys);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`\n======================================================`);
+      console.error(`❌ PORT ${PORT} IS ALREADY IN USE!`);
+      console.error(`The development server could not start because another process is using port ${PORT}.`);
+      console.error(`To fix this, you can free the port and try again:`);
+      console.error(`  - On Windows (PowerShell/CMD):`);
+      console.error(`    npx kill-port ${PORT}`);
+      console.error(`  - On macOS/Linux:`);
+      console.error(`    kill -9 $(lsof -t -i:${PORT})`);
+      console.error(`======================================================\n`);
+      process.exit(1);
+    }
   });
 }
 
