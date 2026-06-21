@@ -681,7 +681,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   onClick={() => handleTabSwitch('admin')}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                     activeTab === 'admin'
-                      ? 'bg-brand-steel text-white shadow-md shadow-brand-steel/10'
+                      ? 'bg-brand-ocean text-white shadow-md shadow-brand-ocean/10'
                       : 'text-brand-charcoal hover:bg-brand-steel/10 dark:text-brand-steel dark:hover:bg-brand-steel/10'
                   }`}
                 >
@@ -695,7 +695,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   onClick={() => handleTabSwitch('admin-users')}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                     activeTab === 'admin-users'
-                      ? 'bg-brand-steel text-white shadow-md shadow-brand-steel/10'
+                      ? 'bg-brand-ocean text-white shadow-md shadow-brand-ocean/10'
                       : 'text-brand-charcoal hover:bg-brand-steel/10 dark:text-brand-steel dark:hover:bg-brand-steel/10'
                   }`}
                 >
@@ -709,7 +709,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   onClick={() => handleTabSwitch('admin-lessons')}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                     activeTab === 'admin-lessons'
-                      ? 'bg-brand-steel text-white shadow-md shadow-brand-steel/10'
+                      ? 'bg-brand-ocean text-white shadow-md shadow-brand-ocean/10'
                       : 'text-brand-charcoal hover:bg-brand-steel/10 dark:text-brand-steel dark:hover:bg-brand-steel/10'
                   }`}
                 >
@@ -723,7 +723,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   onClick={() => handleTabSwitch('admin-reports')}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                     activeTab === 'admin-reports'
-                      ? 'bg-brand-steel text-white shadow-md shadow-brand-steel/10'
+                      ? 'bg-brand-ocean text-white shadow-md shadow-brand-ocean/10'
                       : 'text-brand-charcoal hover:bg-brand-steel/10 dark:text-brand-steel dark:hover:bg-brand-steel/10'
                   }`}
                 >
@@ -742,7 +742,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   onClick={() => handleTabSwitch('admin-profile')}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
                     activeTab === 'admin-profile'
-                      ? 'bg-brand-steel text-white shadow-md shadow-brand-steel/10'
+                      ? 'bg-brand-ocean text-white shadow-md shadow-brand-ocean/10'
                       : 'text-brand-charcoal hover:bg-brand-steel/10 dark:text-brand-steel dark:hover:bg-brand-steel/10'
                   }`}
                 >
@@ -942,7 +942,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-white dark:bg-zinc-900 border rounded-3xl p-6 sm:p-10 shadow-sm space-y-8"
+                className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 sm:p-10 shadow-sm space-y-8"
               >
                 <div>
                   <h2 className="text-xl sm:text-2xl font-bold font-sans">Publish a Meaningful Life Lesson</h2>
@@ -1088,7 +1088,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-white dark:bg-zinc-900 border rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
+                className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
               >
                 <div>
                   <h2 className="text-xl font-bold font-sans">Manage publications</h2>
@@ -1193,7 +1193,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-white dark:bg-zinc-900 border rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
+                className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
               >
                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                   <div>
@@ -1303,7 +1303,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 className="space-y-8"
               >
                 {/* Profile Overview Card */}
-                <div className="bg-white dark:bg-zinc-900 border rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-center gap-6 justify-between animate-fade-in">
+                <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col md:flex-row items-center gap-6 justify-between animate-fade-in">
                   <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
                     <img
                       src={user?.photoURL || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120'}
@@ -1354,7 +1354,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 </div>
 
                 {/* Manage info form */}
-                <div className="bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
                   <div>
                     <h2 className="text-lg font-bold font-sans text-slate-900 dark:text-white">Edit Profile Identity</h2>
                     <p className="text-xs text-slate-400 mt-1">Keep your credentials and avatar details synchronized (Email read-only).</p>
@@ -1420,7 +1420,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   </div>
 
                   {myLessons.filter((l) => l.visibility === 'Public').length === 0 ? (
-                    <div className="p-12 text-center border bg-white dark:bg-zinc-900 rounded-2xl">
+                    <div className="p-12 text-center border border-brand-steel/20 bg-brand-white dark:bg-brand-charcoal rounded-2xl">
                       <p className="text-sm text-slate-400 italic">No public assets published yet. Change a lesson's visibility to 'Public' to display it here.</p>
                     </div>
                   ) : (
@@ -1432,7 +1432,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                           return (
                             <div
                               key={lesson.id}
-                              className="flex flex-col h-full justify-between bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-sm relative transition-all hover:shadow-md group"
+                              className="flex flex-col h-full justify-between bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl overflow-hidden shadow-sm relative transition-all hover:shadow-md group"
                             >
                               {/* Card Media Header */}
                               <div className="relative w-full h-40 bg-slate-100 dark:bg-zinc-850 overflow-hidden">
@@ -1518,31 +1518,31 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 className="space-y-8"
               >
                 <div>
-                  <span className="text-xs font-mono font-bold uppercase text-rose-500">Super Admin Gateway</span>
+                  <span className="text-xs font-mono font-bold uppercase text-brand-ocean dark:text-brand-steel tracking-wider">Super Admin Gateway</span>
                   <h2 className="text-2xl font-bold font-sans mt-0.5">Platform Analytics Panel</h2>
                 </div>
 
                 {/* Grid stats */}
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 font-semibold">
                   
-                  <div className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm">
-                    <p className="text-[10px] font-mono font-bold text-slate-405 uppercase">Total User base</p>
+                  <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm">
+                    <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Total User base</p>
                     <p className="text-3xl font-bold font-mono mt-2">{adminStats.totalUsers}</p>
                   </div>
 
-                  <div className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm">
-                    <p className="text-[10px] font-mono font-bold text-slate-400 uppercase">Live Public Lessons</p>
+                  <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm">
+                    <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Live Public Lessons</p>
                     <p className="text-3xl font-bold font-mono mt-2">{adminStats.totalPublicLessons}</p>
                   </div>
 
-                  <div className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm">
-                    <p className="text-[10px] font-mono font-bold text-slate-400 uppercase">Flagged Disputes</p>
+                  <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm">
+                    <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Flagged Disputes</p>
                     <p className="text-3xl font-bold font-mono mt-2 text-rose-500">{adminStats.totalReports}</p>
                   </div>
 
-                  <div className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm">
-                    <p className="text-[10px] font-mono font-bold text-slate-400 uppercase">Added Today</p>
-                    <p className="text-3xl font-bold font-mono mt-2 text-indigo-600">{adminStats.todaysLessons}</p>
+                  <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm">
+                    <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Added Today</p>
+                    <p className="text-3xl font-bold font-mono mt-2 text-brand-ocean dark:text-brand-steel">{adminStats.todaysLessons}</p>
                   </div>
 
                 </div>
@@ -1551,18 +1551,18 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   
                   {/* Top providers */}
-                  <div className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm space-y-4 md:col-span-1">
-                    <h3 className="text-xs font-bold uppercase tracking-wider font-mono text-slate-400">Top Plateform Contributors</h3>
+                  <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm space-y-4 md:col-span-1">
+                    <h3 className="text-xs font-bold uppercase tracking-wider font-mono text-brand-steel">Top Platform Contributors</h3>
                     
                     <div className="space-y-3">
                       {adminStats.activeContributors && adminStats.activeContributors.length > 0 ? (
                         adminStats.activeContributors.map((c, idx) => (
-                          <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-zinc-800 border border-slate-100 dark:border-zinc-800">
+                          <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-50/50 dark:bg-brand-midnight border border-brand-steel/15">
                             <div className="flex items-center gap-2">
                               <img src={c.photo} referrerPolicy="no-referrer" className="w-7 h-7 rounded-full object-cover border border-slate-200" />
-                              <span className="text-xs font-bold truncate max-w-[120px]">{c.name}</span>
+                              <span className="text-xs font-bold truncate max-w-[120px] text-brand-charcoal dark:text-brand-white">{c.name}</span>
                             </div>
-                            <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-200/50 dark:bg-zinc-700 px-1.5 py-0.5 rounded">{c.count} publ.</span>
+                            <span className="text-[10px] font-mono font-bold text-brand-steel bg-brand-steel/10 dark:bg-brand-white/5 px-1.5 py-0.5 rounded">{c.count} publ.</span>
                           </div>
                         ))
                       ) : (
@@ -1572,13 +1572,13 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   </div>
 
                   {/* User Growth Chart */}
-                  <div className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm space-y-4 md:col-span-1">
+                  <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm space-y-4 md:col-span-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-xs font-bold uppercase tracking-wider font-mono text-slate-400">User Signups Growth</h3>
+                        <h3 className="text-xs font-bold uppercase tracking-wider font-mono text-slate-405">User Signups Growth</h3>
                         <p className="text-[10px] text-slate-400">Represented registry count history</p>
                       </div>
-                      <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold font-mono text-rose-600 bg-rose-50 rounded">Monthly</span>
+                      <span className="inline-flex items-center px-2 py-0.5 text-[9px] font-bold font-mono text-brand-ocean bg-brand-ocean/10 dark:text-brand-steel dark:bg-brand-steel/15 border border-brand-ocean/20 dark:border-brand-steel/20 rounded-full shadow-xs">Monthly</span>
                     </div>
                     {renderSVGChart([
                       { label: 'Jan', val: 5 },
@@ -1591,13 +1591,13 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   </div>
 
                   {/* Lesson Growth Chart */}
-                  <div className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm space-y-4 md:col-span-1">
+                  <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-2xl p-6 shadow-sm space-y-4 md:col-span-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-xs font-bold uppercase tracking-wider font-mono text-slate-400">Lessons Growth</h3>
+                        <h3 className="text-xs font-bold uppercase tracking-wider font-mono text-slate-405">Lessons Growth</h3>
                         <p className="text-[10px] text-slate-400">Wisdom library volume history</p>
                       </div>
-                      <span className="inline-flex items-center px-1.5 py-0.5 text-[9px] font-bold font-mono text-indigo-600 bg-indigo-50 rounded">Monthly</span>
+                      <span className="inline-flex items-center px-2 py-0.5 text-[9px] font-bold font-mono text-brand-ocean bg-brand-ocean/10 dark:text-brand-steel dark:bg-brand-steel/15 border border-brand-ocean/20 dark:border-brand-steel/20 rounded-full shadow-xs">Monthly</span>
                     </div>
                     {renderSVGChart([
                       { label: 'Jan', val: 2 },
@@ -1620,7 +1620,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-white dark:bg-zinc-900 border rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
+                className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
               >
                 <div>
                   <h2 className="text-xl font-bold font-sans">Control User Accounts</h2>
@@ -1630,18 +1630,18 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs sm:text-sm">
                     <thead>
-                      <tr className="bg-slate-50/50 dark:bg-zinc-800/40 border-b border-slate-100 font-mono text-slate-404 text-[10px] uppercase">
-                        <th className="py-3 px-4">Scholar name</th>
-                        <th className="py-3 px-4">Email</th>
-                        <th className="py-3 px-4">Role Permission</th>
-                        <th className="py-3 px-4 text-center">Publications</th>
-                        <th className="py-3 px-4 text-right">Settings</th>
+                      <tr className="bg-slate-50/50 dark:bg-brand-midnight/40 border-b border-brand-steel/15 font-mono text-brand-steel text-[10px] uppercase">
+                        <th className="py-3 px-4 font-bold">Scholar name</th>
+                        <th className="py-3 px-4 font-bold">Email</th>
+                        <th className="py-3 px-4 font-bold">Role Permission</th>
+                        <th className="py-3 px-4 text-center font-bold">Publications</th>
+                        <th className="py-3 px-4 text-right font-bold">Settings</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-101 dark:divide-zinc-800">
+                    <tbody className="divide-y divide-brand-steel/10 dark:divide-brand-steel/10">
                       {adminUsers.map((u) => (
-                        <tr key={u.id} className="hover:bg-slate-50/30">
-                          <td className="py-4 px-4 flex items-center gap-2">
+                        <tr key={u.id} className="hover:bg-brand-steel/5 transition-colors">
+                          <td className="py-4 px-4 flex items-center gap-2 text-brand-charcoal dark:text-brand-white">
                             <img src={u.photoURL} referrerPolicy="no-referrer" className="w-7 h-7 rounded-lg object-cover" />
                             <span className="font-bold">{u.name}</span>
                             {u.isPremium && (
@@ -1650,9 +1650,13 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                               </span>
                             )}
                           </td>
-                          <td className="py-4 px-4 font-mono text-slate-440">{u.email}</td>
+                          <td className="py-4 px-4 font-mono text-brand-steel dark:text-brand-steel/85">{u.email}</td>
                           <td className="py-4 px-4">
-                            <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase ${u.role === 'admin' ? 'bg-rose-500/10 text-rose-500' : 'bg-slate-50 text-slate-500'}`}>
+                            <span className={`inline-flex items-center px-2.5 py-0.5 text-[10px] font-bold font-mono uppercase rounded-full shadow-sm border ${
+                              u.role === 'admin' 
+                                ? 'bg-brand-ocean/15 text-brand-ocean dark:bg-brand-steel/20 dark:text-brand-steel border-brand-ocean/25 dark:border-brand-steel/25' 
+                                : 'bg-brand-steel/5 text-brand-steel/80 dark:bg-brand-midnight/40 border-brand-steel/10 dark:border-brand-steel/10'
+                            }`}>
                               {u.role}
                             </span>
                           </td>
@@ -1687,7 +1691,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-white dark:bg-zinc-900 border rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
+                className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
               >
                 <div>
                   <h2 className="text-xl font-bold font-sans">Moderate wisdom pool</h2>
@@ -1696,29 +1700,29 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
 
                 {/* Grid summary stats inside Manage Lessons */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 font-semibold">
-                  <div className="bg-slate-50 dark:bg-zinc-800 border border-slate-100 dark:border-zinc-800 rounded-2xl p-4 flex items-center justify-between">
+                  <div className="bg-slate-50/50 dark:bg-brand-midnight border border-brand-steel/20 rounded-2xl p-4 flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] font-mono font-bold text-slate-400 dark:text-zinc-500 uppercase">Public Lessons</p>
-                      <p className="text-2xl font-bold font-mono mt-1 text-slate-800 dark:text-zinc-100">
+                      <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Public Lessons</p>
+                      <p className="text-2xl font-bold font-mono mt-1 text-brand-charcoal dark:text-brand-white">
                         {adminLessons.filter(l => l.visibility === 'Public').length}
                       </p>
                     </div>
                     <BookOpen className="w-8 h-8 text-indigo-500/20" />
                   </div>
 
-                  <div className="bg-slate-50 dark:bg-zinc-800 border border-slate-100 dark:border-zinc-800 rounded-2xl p-4 flex items-center justify-between">
+                  <div className="bg-slate-50/50 dark:bg-brand-midnight border border-brand-steel/20 rounded-2xl p-4 flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] font-mono font-bold text-slate-400 dark:text-zinc-500 uppercase">Private Lessons</p>
-                      <p className="text-2xl font-bold font-mono mt-1 text-slate-800 dark:text-zinc-100">
+                      <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Private Lessons</p>
+                      <p className="text-2xl font-bold font-mono mt-1 text-brand-charcoal dark:text-brand-white">
                         {adminLessons.filter(l => l.visibility === 'Private').length}
                       </p>
                     </div>
                     <Settings className="w-8 h-8 text-amber-500/20" />
                   </div>
 
-                  <div className="bg-slate-50 dark:bg-zinc-800 border border-slate-100 dark:border-zinc-800 rounded-2xl p-4 flex items-center justify-between">
+                  <div className="bg-slate-50/50 dark:bg-brand-midnight border border-brand-steel/20 rounded-2xl p-4 flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] font-mono font-bold text-slate-400 dark:text-zinc-500 uppercase">Flagged Content</p>
+                      <p className="text-[10px] font-mono font-bold text-brand-steel uppercase">Flagged Content</p>
                       <p className="text-2xl font-bold font-mono mt-1 text-rose-500">
                         {new Set(adminReports.map(r => r.lessonId)).size}
                       </p>
@@ -1728,13 +1732,13 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 </div>
 
                 {/* Filter Controls Bar */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 dark:bg-zinc-800 p-4 rounded-2xl border border-slate-100 dark:border-zinc-800">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-brand-white dark:bg-brand-midnight p-4 rounded-2xl border border-brand-steel/20">
                   <div>
-                    <label className="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Filter Category</label>
+                    <label className="block text-[10px] font-mono font-bold uppercase text-brand-steel mb-1">Filter Category</label>
                     <select
                       value={adminLessonCategoryFilter}
                       onChange={(e) => setAdminLessonCategoryFilter(e.target.value)}
-                      className="w-full text-xs font-sans rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-750 px-3 py-2 cursor-pointer focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      className="w-full text-xs font-sans rounded-xl bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 px-3 py-2 cursor-pointer focus:outline-none focus:ring-1 focus:ring-brand-ocean text-brand-charcoal dark:text-brand-white font-semibold"
                     >
                       <option value="">All Categories</option>
                       <option value="Personal Growth">Personal Growth</option>
@@ -1746,11 +1750,11 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Filter Visibility</label>
+                    <label className="block text-[10px] font-mono font-bold uppercase text-brand-steel mb-1">Filter Visibility</label>
                     <select
                       value={adminLessonVisibilityFilter}
                       onChange={(e) => setAdminLessonVisibilityFilter(e.target.value)}
-                      className="w-full text-xs font-sans rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-750 px-3 py-2 cursor-pointer focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      className="w-full text-xs font-sans rounded-xl bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 px-3 py-2 cursor-pointer focus:outline-none focus:ring-1 focus:ring-brand-ocean text-brand-charcoal dark:text-brand-white font-semibold"
                     >
                       <option value="">All Visibilities</option>
                       <option value="Public">Public</option>
@@ -1759,11 +1763,11 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-mono font-bold uppercase text-slate-400 mb-1">Filter Flags</label>
+                    <label className="block text-[10px] font-mono font-bold uppercase text-brand-steel mb-1">Filter Flags</label>
                     <select
                       value={adminLessonFlagFilter}
                       onChange={(e) => setAdminLessonFlagFilter(e.target.value)}
-                      className="w-full text-xs font-sans rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-750 px-3 py-2 cursor-pointer focus:outline-none focus:ring-1 focus:ring-rose-500"
+                      className="w-full text-xs font-sans rounded-xl bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 px-3 py-2 cursor-pointer focus:outline-none focus:ring-1 focus:ring-brand-ocean text-brand-charcoal dark:text-brand-white font-semibold"
                     >
                       <option value="">All Content</option>
                       <option value="flagged">Flagged / Reported Only</option>
@@ -1797,36 +1801,42 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse text-xs sm:text-sm">
                         <thead>
-                          <tr className="bg-slate-50/50 dark:bg-zinc-800/40 border-b border-slate-100 font-mono text-slate-405 text-[10px] uppercase">
-                            <th className="py-3 px-4">Title / Author</th>
-                            <th className="py-3 px-4">Category</th>
-                            <th className="py-3 px-4 text-center">Status Vetted</th>
-                            <th className="py-3 px-4 text-center">Featured Slide</th>
-                            <th className="py-3 px-4 text-right">Moderations</th>
+                          <tr className="bg-slate-50/50 dark:bg-brand-midnight/40 border-b border-brand-steel/15 font-mono text-brand-steel text-[10px] uppercase">
+                            <th className="py-3 px-4 font-bold">Title / Author</th>
+                            <th className="py-3 px-4 font-bold">Category</th>
+                            <th className="py-3 px-4 text-center font-bold">Status Vetted</th>
+                            <th className="py-3 px-4 text-center font-bold">Featured Slide</th>
+                            <th className="py-3 px-4 text-right font-bold">Moderations</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-zinc-800">
+                        <tbody className="divide-y divide-brand-steel/10 dark:divide-brand-steel/10">
                           {filteredAdminLessons.map((l) => {
                             const hasFlag = adminReports.some(r => r.lessonId === l.id);
                             return (
-                              <tr key={l.id} className={`hover:bg-slate-50/30 transition-colors ${hasFlag ? 'bg-rose-500/5 hover:bg-rose-500/10' : ''}`}>
+                              <tr key={l.id} className={`hover:bg-brand-steel/5 transition-colors ${hasFlag ? 'bg-rose-500/5 hover:bg-rose-500/10' : ''}`}>
                                 <td className="py-4 px-4 flex-1">
                                   <div className="flex items-center gap-1.5">
-                                    <p className="font-bold line-clamp-1">{l.title}</p>
+                                    <p className="font-bold line-clamp-1 text-brand-charcoal dark:text-brand-white">{l.title}</p>
                                     {hasFlag && (
                                       <span className="px-1.5 py-0.5 text-[8px] font-mono font-bold bg-rose-500 text-white rounded animate-pulse">FLAGGED</span>
                                     )}
                                   </div>
-                                  <p className="text-[10px] text-slate-400 font-mono">By: {l.creatorName}</p>
+                                  <p className="text-[10px] text-brand-steel font-mono">By: {l.creatorName}</p>
                                 </td>
-                                <td className="py-4 px-4 font-mono text-xs">{l.category}</td>
+                                <td className="py-4 px-4">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 text-[10px] font-bold font-mono bg-brand-ocean/10 text-brand-ocean dark:bg-brand-steel/15 dark:text-brand-steel border border-brand-ocean/15 dark:border-brand-steel/15 rounded-full shadow-xs">
+                                    {l.category}
+                                  </span>
+                                </td>
                                 <td className="py-4 px-4 text-center">
                                   {l.isReviewed ? (
-                                    <span className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold border border-emerald-100 font-mono uppercase">Vetted</span>
+                                    <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 bg-brand-ocean/15 text-brand-ocean dark:bg-brand-steel/20 dark:text-brand-steel border border-brand-ocean/20 dark:border-brand-steel/20 rounded-full text-[10px] font-bold font-mono uppercase shadow-sm">
+                                      Vetted
+                                    </span>
                                   ) : (
                                     <button
                                       onClick={() => handleMarkReviewed(l.id)}
-                                      className="px-2 py-0.5 bg-brand-ocean text-white rounded text-[10px] font-bold font-mono hover:bg-brand-steel cursor-pointer transition-colors"
+                                      className="px-2.5 py-1 bg-brand-ocean text-white rounded text-[10px] font-bold font-mono hover:bg-brand-ocean/85 cursor-pointer transition-colors"
                                     >
                                       Vet Review
                                     </button>
@@ -1837,10 +1847,10 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                                 <td className="py-4 px-4 text-center font-semibold">
                                   <button
                                     onClick={() => handleToggleFeatured(l)}
-                                    className={`px-2 py-1 rounded text-[10px] font-bold font-mono border cursor-pointer ${
+                                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono border cursor-pointer transition-all shadow-sm ${
                                       l.isFeatured
-                                        ? 'bg-amber-50 border-amber-100 text-amber-600'
-                                        : 'bg-slate-50 hover:bg-slate-100 border-slate-100 text-slate-450'
+                                        ? 'bg-brand-ocean/15 text-brand-ocean dark:bg-brand-steel/20 dark:text-brand-steel border-brand-ocean/20 dark:border-brand-steel/20'
+                                        : 'bg-brand-steel/5 hover:bg-brand-steel/10 border-brand-steel/15 text-brand-steel dark:bg-brand-midnight/40'
                                     }`}
                                   >
                                     {l.isFeatured ? 'Nominated' : 'Nominate'}
@@ -1879,7 +1889,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="bg-white dark:bg-zinc-900 border rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
+                className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6"
               >
                 <div>
                   <h2 className="text-xl font-bold font-sans">Reported Flagged Compliance</h2>
@@ -1915,31 +1925,35 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse text-xs sm:text-sm">
                         <thead>
-                          <tr className="bg-slate-50/50 dark:bg-zinc-800/40 border-b border-slate-100 font-mono text-slate-400 text-[10px] uppercase">
-                            <th className="py-3 px-4">Reported Lesson Title</th>
-                            <th className="py-3 px-4 text-center">Flags Count</th>
-                            <th className="py-3 px-4">Latest Indicator</th>
-                            <th className="py-3 px-4 text-right">Actions</th>
+                          <tr className="bg-slate-50/50 dark:bg-brand-midnight/40 border-b border-brand-steel/15 font-mono text-brand-steel text-[10px] uppercase">
+                            <th className="py-3 px-4 font-bold">Reported Lesson Title</th>
+                            <th className="py-3 px-4 text-center font-bold">Flags Count</th>
+                            <th className="py-3 px-4 font-bold">Latest Indicator</th>
+                            <th className="py-3 px-4 text-right font-bold">Actions</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-101 dark:divide-zinc-800">
+                        <tbody className="divide-y divide-brand-steel/10 dark:divide-brand-steel/10">
                           {groupedReports.map((g) => {
                             const latestReason = g.reports[g.reports.length - 1]?.reason || 'Flagged';
                             return (
                               <tr key={g.lessonId} className="hover:bg-rose-500/5 transition-colors">
-                                <td className="py-4 px-4 font-bold max-w-[200px] truncate">{g.lessonTitle || 'Untitled Publication'}</td>
+                                <td className="py-4 px-4 font-bold max-w-[200px] truncate text-brand-charcoal dark:text-brand-white">{g.lessonTitle || 'Untitled Publication'}</td>
                                 <td className="py-4 px-4 text-center">
-                                  <span className="inline-flex px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 font-mono text-xs font-bold">
-                                    {g.reports.length}
+                                  <span className="inline-flex items-center px-2.5 py-0.5 text-[10px] font-bold font-mono rounded-full bg-rose-500/10 text-rose-600 border border-rose-500/25 shadow-xs">
+                                    {g.reports.length} Flags
                                   </span>
                                 </td>
-                                <td className="py-4 px-4 text-xs font-semibold text-rose-500/80">{latestReason}</td>
+                                <td className="py-4 px-4">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 text-[10px] font-bold font-mono uppercase bg-brand-ocean/10 text-brand-ocean dark:bg-brand-steel/15 dark:text-brand-steel border border-brand-ocean/20 dark:border-brand-steel/20 rounded-md shadow-xs">
+                                    {latestReason}
+                                  </span>
+                                </td>
                                 <td className="py-4 px-4 text-right whitespace-nowrap space-x-2 font-semibold">
                                   
                                   {/* Opened details in modal showing all reasons and reporters */}
                                   <button
                                     onClick={() => setActiveReportDetails(g.reports)}
-                                    className="px-2.5 py-1 text-xs border border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-850 rounded-lg cursor-pointer"
+                                    className="px-2.5 py-1 text-xs border border-brand-steel/25 dark:border-brand-steel/25 hover:bg-brand-steel/10 dark:hover:bg-brand-midnight text-brand-charcoal dark:text-brand-white rounded-lg cursor-pointer transition-colors"
                                   >
                                     View reasons ({g.reports.length})
                                   </button>
@@ -1999,19 +2013,19 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                     </div>
                   </div>
 
-                  <div className="bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-3xl p-6 shadow-sm space-y-4">
-                    <h4 className="text-xs font-bold uppercase font-mono text-slate-400">Activity Summary</h4>
+                  <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 shadow-sm space-y-4">
+                    <h4 className="text-xs font-bold uppercase font-mono text-brand-steel">Activity Summary</h4>
                     
                     <div className="space-y-3 font-semibold text-xs">
-                      <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zinc-800">
+                      <div className="flex justify-between items-center py-2 border-b border-brand-steel/10 dark:border-brand-steel/15">
                         <span className="text-slate-500">Lessons Reviewed</span>
                         <span className="font-mono text-emerald-600 font-bold">{adminLessons.filter(l => l.isReviewed).length}</span>
                       </div>
-                      <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zinc-800">
+                      <div className="flex justify-between items-center py-2 border-b border-brand-steel/10 dark:border-brand-steel/15">
                         <span className="text-slate-500">Nominated Slides</span>
                         <span className="font-mono text-amber-500 font-bold">{adminLessons.filter(l => l.isFeatured).length}</span>
                       </div>
-                      <div className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-zinc-800">
+                      <div className="flex justify-between items-center py-2 border-b border-brand-steel/10 dark:border-brand-steel/15">
                         <span className="text-slate-500">Total System Users</span>
                         <span className="font-mono text-indigo-500 font-bold">{adminUsers.length || 6}</span>
                       </div>
@@ -2024,7 +2038,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                 </div>
 
                 {/* Update Details Form */}
-                <div className="md:col-span-2 bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                <div className="md:col-span-2 bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6 text-brand-charcoal dark:text-brand-white">
                   <div>
                     <h2 className="text-xl font-bold font-sans">Admin Settings</h2>
                     <p className="text-xs text-slate-400 mt-1">Configure your personal credentials on the Scholar platform.</p>
@@ -2037,7 +2051,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                         type="text"
                         value={profileName}
                         onChange={(e) => setProfileName(e.target.value)}
-                        className="w-full text-xs font-sans rounded-xl bg-slate-50 dark:bg-zinc-850 border dark:border-zinc-850 px-4 py-3 focus:outline-none focus:ring-1 focus:ring-rose-500 font-semibold"
+                        className="w-full text-xs font-sans rounded-xl bg-slate-50 dark:bg-brand-midnight border border-slate-200 dark:border-brand-steel/30 px-4 py-3 focus:outline-none focus:ring-1 focus:ring-brand-ocean font-semibold text-brand-charcoal dark:text-brand-white"
                         required
                         placeholder="Admin Display Name"
                       />
@@ -2049,16 +2063,16 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
                         type="text"
                         value={profilePhoto}
                         onChange={(e) => setProfilePhoto(e.target.value)}
-                        className="w-full text-xs font-mono rounded-xl bg-slate-50 dark:bg-zinc-850 border dark:border-zinc-850 px-4 py-3 focus:outline-none focus:ring-1 focus:ring-rose-500"
+                        className="w-full text-xs font-mono rounded-xl bg-slate-50 dark:bg-brand-midnight border border-slate-200 dark:border-brand-steel/30 px-4 py-3 focus:outline-none focus:ring-1 focus:ring-brand-ocean text-brand-charcoal dark:text-brand-white"
                         placeholder="https://example.com/photo.jpg"
                       />
                     </div>
 
-                    <div className="pt-4 border-t border-slate-100 dark:border-zinc-800 flex justify-end">
+                    <div className="pt-4 border-t border-brand-steel/10 dark:border-brand-steel/20 flex justify-end">
                       <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-2.5 text-xs font-bold font-mono tracking-wide text-white bg-brand-ocean hover:bg-brand-steel disabled:opacity-50 rounded-xl cursor-pointer shadow-md shadow-brand-ocean/15 transition-colors"
+                        className="px-6 py-2.5 text-xs font-bold font-mono tracking-wide text-white bg-brand-ocean hover:bg-brand-ocean/85 disabled:opacity-50 rounded-xl cursor-pointer shadow-md shadow-brand-ocean/15 transition-colors"
                       >
                         {loading ? 'Saving credentials...' : 'Update Admin Identity'}
                       </button>
@@ -2076,7 +2090,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
       {/* UPDATE LESSON PORTAL MODAL DIALOG */}
       {editingLesson && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-250">
-          <div className="bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-3xl w-full max-w-2xl p-6 sm:p-8 space-y-6 shadow-xl overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-150">
+          <div className="bg-brand-white dark:bg-brand-midnight border border-brand-steel/20 rounded-3xl w-full max-w-2xl p-6 sm:p-8 space-y-6 shadow-xl overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-150 text-brand-charcoal dark:text-brand-white">
             
             <div className="flex justify-between items-center pb-4 border-b">
               <h2 className="text-lg font-bold font-sans">Update Wisdom Publications Details</h2>
@@ -2234,7 +2248,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
       {/* ADMIN REPORT REASONS INSPECTOR MODAL */}
       {activeReportDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-250">
-          <div className="bg-white dark:bg-zinc-900 border dark:border-zinc-800 rounded-3xl w-full max-w-md p-6 sm:p-8 space-y-6 shadow-xl animate-in zoom-in-95 duration-150">
+          <div className="bg-brand-white dark:bg-brand-midnight border border-brand-steel/20 rounded-3xl w-full max-w-md p-6 sm:p-8 space-y-6 shadow-xl animate-in zoom-in-95 duration-150 text-brand-charcoal dark:text-brand-white">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold font-sans">Dispute Compliance Records</h2>
               <button
