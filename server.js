@@ -380,7 +380,7 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-let MongoUser = mongoose.model('User', userSchema);
+let MongoUser = mongoose.models.User || mongoose.model('User', userSchema);
 
 // Lesson Schema
 const lessonSchema = new mongoose.Schema({
@@ -405,7 +405,7 @@ const lessonSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-let MongoLesson = mongoose.model('Lesson', lessonSchema);
+let MongoLesson = mongoose.models.Lesson || mongoose.model('Lesson', lessonSchema);
 
 // Favorite Schema
 const favoriteSchema = new mongoose.Schema({
@@ -415,7 +415,7 @@ const favoriteSchema = new mongoose.Schema({
   savedAt: { type: Date, default: Date.now }
 });
 
-let MongoFavorite = mongoose.model('Favorite', favoriteSchema);
+let MongoFavorite = mongoose.models.Favorite || mongoose.model('Favorite', favoriteSchema);
 
 // Comment Schema
 const commentSchema = new mongoose.Schema({
@@ -428,7 +428,7 @@ const commentSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-let MongoComment = mongoose.model('Comment', commentSchema);
+let MongoComment = mongoose.models.Comment || mongoose.model('Comment', commentSchema);
 
 // Report Schema
 const reportSchema = new mongoose.Schema({
@@ -442,7 +442,7 @@ const reportSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
-let MongoReport = mongoose.model('Report', reportSchema, 'lessonsReports');
+let MongoReport = mongoose.models.Report || mongoose.model('Report', reportSchema, 'lessonsReports');
 
 // --- In-Memory Mock Database Fallbacks ---
 // This guarantees that if MongoDB port is blocked or credentials fail/time out on localhost,
