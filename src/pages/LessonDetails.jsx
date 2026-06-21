@@ -523,7 +523,7 @@ export default function LessonDetails({ lessonId, onNavigate, onSelectAuthorEmai
                   <p className="text-sm text-slate-405 italic">No reviews published yet. Be the first to share your breakthrough perspective!</p>
                 ) : (
                   comments.map(c => (
-                    <div key={c.id} className="flex gap-3 text-sm p-4 rounded-xl bg-slate-50/50 dark:bg-zinc-900/30 border border-slate-100/50 dark:border-brand-ocean/10">
+                    <div key={c.id} className="flex gap-3 text-sm p-4 rounded-xl bg-slate-50/50 dark:bg-brand-midnight border border-brand-steel/15">
                       <img 
                         src={c.userPhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'} 
                         className="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5" 
@@ -646,7 +646,7 @@ export default function LessonDetails({ lessonId, onNavigate, onSelectAuthorEmai
       {/* Flag / Report Popup Modal */}
       {reportModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 text-left">
-          <div className="bg-white dark:bg-zinc-900 border border-slate-105 dark:border-zinc-800 rounded-3xl w-full max-w-sm p-6 sm:p-8 space-y-6 shadow-xl animate-in zoom-in-95 duration-100">
+          <div className="bg-brand-white dark:bg-brand-charcoal border border-brand-steel/20 rounded-3xl w-full max-w-sm p-6 sm:p-8 space-y-6 shadow-xl animate-in zoom-in-95 duration-100 text-brand-charcoal dark:text-brand-white">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-bold font-sans">Report Compliance Issue</h2>
               <button
