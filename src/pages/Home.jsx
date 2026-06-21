@@ -97,71 +97,73 @@ export default function Home({ onNavigate }) {
     <div className="bg-brand-white dark:bg-[#011425] text-brand-charcoal dark:text-brand-white min-h-screen transition-colors duration-200">
       
       {/* 1. HERO SLIDER SECTION */}
-      <section className="relative w-full h-[580px] bg-[#011425] overflow-hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSlide}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.5 } }}
-            className="absolute inset-0 w-full h-full"
-          >
-            {/* Background Image with overlay */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center animate-pulse-subtle"
-              style={{ backgroundImage: `url(${slides[currentSlide].bg})` }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#011425]/95 via-[#011425]/85 to-transparent dark:from-black/95 dark:via-black/75" />
-
-            {/* Slider Content */}
-            <div className="absolute inset-0 flex items-center">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full z-10 flex flex-col md:flex-row justify-between items-center gap-12">
-                <motion.div
-                  initial={{ y: 40, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
-                  className="max-w-3xl text-left space-y-6"
-                >
-                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white font-sans leading-none">
-                    {slides[currentSlide].title}
-                  </h1>
-                  
-                  <p className="text-lg text-brand-steel font-sans leading-relaxed opacity-95">
-                    {slides[currentSlide].description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-3 pt-4">
-                    <button
-                      onClick={() => onNavigate(slides[currentSlide].route)}
-                      className="px-6 py-3 text-sm font-semibold rounded-xl bg-brand-ocean hover:bg-brand-steel text-white shadow-lg shadow-brand-ocean/20 transition-all flex items-center gap-2 cursor-pointer"
-                    >
-                      {slides[currentSlide].action}
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onNavigate('/public-lessons')}
-                      className="px-6 py-3 text-sm font-semibold rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-all cursor-pointer"
-                    >
-                      Browse Wisdom Archive
-                    </button>
-                  </div>
-                </motion.div>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="relative w-full h-[520px] bg-[#011425] rounded-3xl overflow-hidden shadow-lg border border-brand-steel/10 dark:border-brand-ocean/10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.5 } }}
+              className="absolute inset-0 w-full h-full"
+            >
+              {/* Background Image with overlay */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center animate-pulse-subtle"
+                style={{ backgroundImage: `url(${slides[currentSlide].bg})` }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#011425]/95 via-[#011425]/85 to-transparent dark:from-black/95 dark:via-black/75" />
+  
+              {/* Slider Content */}
+              <div className="absolute inset-0 flex items-center">
+                <div className="px-6 sm:px-12 md:px-16 w-full z-10 flex flex-col md:flex-row justify-between items-center gap-12">
+                  <motion.div
+                    initial={{ y: 40, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                    className="max-w-3xl text-left space-y-6"
+                  >
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white font-sans leading-tight">
+                      {slides[currentSlide].title}
+                    </h1>
+                    
+                    <p className="text-base sm:text-lg text-brand-steel font-sans leading-relaxed opacity-95">
+                      {slides[currentSlide].description}
+                    </p>
+  
+                    <div className="flex flex-wrap gap-3 pt-2">
+                      <button
+                        onClick={() => onNavigate(slides[currentSlide].route)}
+                        className="px-6 py-3 text-sm font-semibold rounded-xl bg-brand-ocean hover:bg-brand-steel text-white shadow-lg shadow-brand-ocean/20 transition-all flex items-center gap-2 cursor-pointer"
+                      >
+                        {slides[currentSlide].action}
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => onNavigate('/public-lessons')}
+                        className="px-6 py-3 text-sm font-semibold rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/10 transition-all cursor-pointer"
+                      >
+                        Browse Wisdom Archive
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Dots Navigator */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-          {slides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`w-3.5 h-3.5 rounded-full transition-all cursor-pointer ${
-                currentSlide === idx ? 'bg-brand-steel scale-125' : 'bg-white/30 hover:bg-white/55'
-              }`}
-            />
-          ))}
+            </motion.div>
+          </AnimatePresence>
+  
+          {/* Dots Navigator */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`w-3.5 h-3.5 rounded-full transition-all cursor-pointer ${
+                  currentSlide === idx ? 'bg-brand-steel scale-125' : 'bg-white/30 hover:bg-white/55'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
