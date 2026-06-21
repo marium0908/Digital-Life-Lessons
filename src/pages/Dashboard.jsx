@@ -16,7 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
 export default function Dashboard({ initialTab = 'overview', onNavigate }) {
-  const { user, token, updateProfile } = useAuth();
+  const { user, token, logout, updateProfile } = useAuth();
   const { showToast } = useToast();
 
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -103,6 +103,16 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
     loadDataByTab();
   }, [activeTab, token, user?.id, favCategoryFilter, favToneFilter]);
 
+  const checkResponse = (res) => {
+    if (res && res.status === 401) {
+      logout();
+      showToast('Your session has expired. Please log in again.', 'error');
+      onNavigate('/login');
+      return true;
+    }
+    return false;
+  };
+
   const loadDataByTab = async () => {
     try {
       setLoading(true);
@@ -111,6 +121,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
       // User overview or My Lessons
       if (activeTab === 'overview' || activeTab === 'my-lessons') {
         const res = await fetch('/api/lessons?limit=100', { headers });
+        if (checkResponse(res)) return;
         if (res.ok) {
           const data = await res.json();
           // Filter to only self comments
@@ -126,6 +137,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
         if (favToneFilter) queryParams.set('emotionalTone', favToneFilter);
 
         const res = await fetch(`/api/favorites?${queryParams.toString()}`, { headers });
+        if (checkResponse(res)) return;
         if (res.ok) {
           const data = await res.json();
           setMyFavorites(data.favorites || []);
@@ -140,6 +152,8 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
           fetch('/api/admin/lessons', { headers }),
           fetch('/api/admin/reports', { headers })
         ]);
+
+        if (checkResponse(resStats) || checkResponse(resUsers) || checkResponse(resLessons) || checkResponse(resReports)) return;
 
         if (resStats.ok) {
           const s = await resStats.json();
@@ -196,6 +210,7 @@ export default function Dashboard({ initialTab = 'overview', onNavigate }) {
         body: JSON.stringify(lessonPayload)
       });
 
+      if (checkResponse(res)) return;
       const data = await res.json();
       if (res.ok) {
         showToast('Life lesson stored and published successfully!', 'success');
