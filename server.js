@@ -824,38 +824,48 @@ function setupMemoryFallback() {
 
 // --- Seeding Database Function ---
 async function seedDatabase() {
-  const userCount = await MongoUser.countDocuments();
-  if (userCount === 0) {
-    console.log('Seeding initial MongoDB users...');
-    await MongoUser.insertMany([
-      {
-        id: 'admin-1',
-        name: 'Sarah Wisdom',
-        email: 'admin@lifelessons.com',
-        photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
-        role: 'admin',
-        isPremium: true,
-        password: 'Password123'
-      },
-      {
-        id: 'user-1',
-        name: 'Marcus Aurelius',
-        email: 'marcus@stoic.org',
-        photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-        role: 'user',
-        isPremium: false,
-        password: 'Password123'
-      },
-      {
-        id: 'user-2',
-        name: 'Elena Rostova',
-        email: 'elena@growth.net',
-        photoURL: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150',
-        role: 'user',
-        isPremium: true,
-        password: 'Password123'
-      }
-    ]);
+  console.log('[DATABASE SEED] Running integrity checks for evaluation profiles...');
+
+  const adminExists = await MongoUser.findOne({ email: 'admin@lifelessons.com' });
+  if (!adminExists) {
+    console.log('[DATABASE SEED] Re-creating primary administrator: admin@lifelessons.com');
+    await MongoUser.create({
+      id: 'admin-1',
+      name: 'Sarah Wisdom',
+      email: 'admin@lifelessons.com',
+      photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+      role: 'admin',
+      isPremium: true,
+      password: 'Password123'
+    });
+  }
+
+  const marcusExists = await MongoUser.findOne({ email: 'marcus@stoic.org' });
+  if (!marcusExists) {
+    console.log('[DATABASE SEED] Re-creating free category user: marcus@stoic.org');
+    await MongoUser.create({
+      id: 'user-1',
+      name: 'Marcus Aurelius',
+      email: 'marcus@stoic.org',
+      photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+      role: 'user',
+      isPremium: false,
+      password: 'Password123'
+    });
+  }
+
+  const elenaExists = await MongoUser.findOne({ email: 'elena@growth.net' });
+  if (!elenaExists) {
+    console.log('[DATABASE SEED] Re-creating premium category user: elena@growth.net');
+    await MongoUser.create({
+      id: 'user-2',
+      name: 'Elena Rostova',
+      email: 'elena@growth.net',
+      photoURL: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150',
+      role: 'user',
+      isPremium: true,
+      password: 'Password123'
+    });
   }
 
   const lessonCount = await MongoLesson.countDocuments();
