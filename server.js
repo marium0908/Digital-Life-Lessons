@@ -19,27 +19,14 @@ app.use(express.json());
 
 // Database-ready check middleware to hold incoming requests during cold starts or slower connections
 async function ensureDbReady(req, res, next) {
-  if (hasDatabaseLoaded) {
-    return next();
+  try {
+    await connectToDatabase();
+    next();
+  } catch (err) {
+    console.warn('[MIDDLEWARE] Database connection failed or timed out. Continuing with Memory Fallback.', err.message);
+    setupMemoryFallback();
+    next();
   }
-
-  console.log(`[DB DELAY] Incoming request to ${req.originalUrl || req.url}. Waiting for database connection to resolve...`);
-
-  const start = Date.now();
-  const checkInterval = setInterval(() => {
-    if (hasDatabaseLoaded) {
-      clearInterval(checkInterval);
-      console.log(`[DB DELAY] Database resolved after ${Date.now() - start}ms. Continuing request.`);
-      return next();
-    }
-
-    if (Date.now() - start > 15000) {
-      clearInterval(checkInterval);
-      console.log('[DB DELAY] Max wait exceeded. Bootstrapping fallback database and continuing.');
-      setupMemoryFallback();
-      return next();
-    }
-  }, 100);
 }
 
 app.use('/api', ensureDbReady);
@@ -276,70 +263,108 @@ async function tryResolveSrvAndRewrite(uri) {
   }
 }
 
-// Proactive 12-second race timeout: if Atlas connection hangs (e.g., local IP not whitelisted), fall back immediately
-const fallbackTimer = setTimeout(() => {
-  if (!hasDatabaseLoaded) {
-    console.log('[LOCAL FALLBACK TIMER] MongoDB connection taking too long (>12s). Swapping with robust in-memory store for instant response!');
-    lastDbError = new Error('Connection timed out after 12000ms');
-    setupMemoryFallback();
-  }
-}, 12000);
+let dbConnectionPromise = null;
 
-tryResolveSrvAndRewrite(MONGODB_URI)
-  .then(finalUri => {
-    console.log(`[DATABASE STARTUP] Connecting to rewritten URI...`);
-    return mongoose.connect(finalUri, {
-      serverSelectionTimeoutMS: 12000,
-      connectTimeoutMS: 12000
-    });
-  })
-  .catch(err => {
-    console.warn('[DATABASE STARTUP] Rewritten URI connection failed, trying raw URI direct connection:', err.message);
-    return mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 12000,
-      connectTimeoutMS: 12000
-    });
-  })
-  .then(() => {
-    clearTimeout(fallbackTimer);
+async function connectToDatabase() {
+  if (mongoose.connection.readyState === 1) {
     hasDatabaseLoaded = true;
     isMemoryDatabase = false;
-    lastDbError = null;
-    
-    // Store database connection metadata
-    connectedDbName = mongoose.connection.name;
-    connectedDbHost = mongoose.connection.host;
-    
-    // Retrieve connection collections for diagnostics
-    if (mongoose.connection.db) {
-      mongoose.connection.db.listCollections().toArray()
-        .then(cols => {
+    return;
+  }
+
+  if (dbConnectionPromise) {
+    return dbConnectionPromise;
+  }
+
+  dbConnectionPromise = (async () => {
+    try {
+      const finalUri = await tryResolveSrvAndRewrite(MONGODB_URI);
+      console.log(`[DATABASE STARTUP] Connecting to MongoDB Atlas using:`, finalUri.replace(/:([^:@\/\?]+)@/, ':******@'));
+      
+      await mongoose.connect(finalUri, {
+        serverSelectionTimeoutMS: 8000,
+        connectTimeoutMS: 8000,
+        maxPoolSize: 10,
+        minPoolSize: 0,
+        socketTimeoutMS: 45000,
+      });
+
+      hasDatabaseLoaded = true;
+      isMemoryDatabase = false;
+      lastDbError = null;
+      
+      connectedDbName = mongoose.connection.name;
+      connectedDbHost = mongoose.connection.host;
+      
+      if (mongoose.connection.db) {
+        try {
+          const cols = await mongoose.connection.db.listCollections().toArray();
           existingCollections = cols.map(c => c.name);
           console.log(`Connected to MongoDB Atlas successfully! Database: ${connectedDbName}, Host: ${connectedDbHost}, Collections:`, existingCollections);
-        })
-        .catch(err => {
-          console.error('Connected, but error listing collections:', err);
-        });
-    }
+        } catch (colErr) {
+          console.error('Connected, but error listing collections:', colErr);
+        }
+      }
 
-    // Restore and point back to MongoDB models
-    MongoUser = mongoose.model('User');
-    MongoLesson = mongoose.model('Lesson');
-    MongoFavorite = mongoose.model('Favorite');
-    MongoComment = mongoose.model('Comment');
-    MongoReport = mongoose.model('Report');
-    console.log('Connected to MongoDB successfully! Real database models restored.');
-    seedDatabase().catch(err => console.error('Error seeding database:', err));
-  })
-  .catch(err => {
-    clearTimeout(fallbackTimer);
-    console.error('MongoDB connection error:', err);
-    lastDbError = err;
-    if (!hasDatabaseLoaded) {
-      hasDatabaseLoaded = true;
-      setupMemoryFallback();
+      // Restore and point back to MongoDB models
+      MongoUser = mongoose.model('User');
+      MongoLesson = mongoose.model('Lesson');
+      MongoFavorite = mongoose.model('Favorite');
+      MongoComment = mongoose.model('Comment');
+      MongoReport = mongoose.model('Report');
+      
+      console.log('Connected to MongoDB successfully! Real database models restored.');
+      await seedDatabase();
+    } catch (err) {
+      console.error('[DATABASE STARTUP] Connection to MongoDB failed, trying raw URI direct connection:', err.message);
+      try {
+        await mongoose.connect(MONGODB_URI, {
+          serverSelectionTimeoutMS: 8000,
+          connectTimeoutMS: 8000,
+          maxPoolSize: 10,
+          minPoolSize: 0,
+          socketTimeoutMS: 45000,
+        });
+
+        hasDatabaseLoaded = true;
+        isMemoryDatabase = false;
+        lastDbError = null;
+        connectedDbName = mongoose.connection.name;
+        connectedDbHost = mongoose.connection.host;
+
+        if (mongoose.connection.db) {
+          try {
+            const cols = await mongoose.connection.db.listCollections().toArray();
+            existingCollections = cols.map(c => c.name);
+          } catch (e) {}
+        }
+
+        MongoUser = mongoose.model('User');
+        MongoLesson = mongoose.model('Lesson');
+        MongoFavorite = mongoose.model('Favorite');
+        MongoComment = mongoose.model('Comment');
+        MongoReport = mongoose.model('Report');
+
+        console.log('Connected to MongoDB via Raw URI successfully! Real database models restored.');
+        await seedDatabase();
+      } catch (rawErr) {
+        console.error('[DATABASE STARTUP] Both connection attempts failed:', rawErr.message);
+        lastDbError = rawErr;
+        setupMemoryFallback();
+        throw rawErr;
+      }
     }
+  })();
+
+  return dbConnectionPromise;
+}
+
+// Proactively boot connection on server startup if not Vercel serverless
+if (!process.env.VERCEL) {
+  connectToDatabase().catch(err => {
+    console.warn('[DATABASE STARTUP ERROR] Eager connection failed on startup, fallback active:', err.message);
   });
+}
 
 // --- MongoDB Schemas ---
 
