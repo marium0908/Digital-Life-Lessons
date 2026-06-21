@@ -271,6 +271,10 @@ async function connectToDatabase() {
     return;
   }
 
+  if (mongoose.connection.readyState === 0 || mongoose.connection.readyState === 3) {
+    dbConnectionPromise = null;
+  }
+
   if (dbConnectionPromise) {
     return dbConnectionPromise;
   }
@@ -349,6 +353,7 @@ async function connectToDatabase() {
       } catch (rawErr) {
         console.error('[DATABASE STARTUP] Both connection attempts failed:', rawErr.message);
         lastDbError = rawErr;
+        dbConnectionPromise = null; // Clear so next client request will retry
         setupMemoryFallback();
         throw rawErr;
       }
@@ -1068,6 +1073,19 @@ function requireAdmin(req, res, next) {
 
 // Check database connection status
 app.get('/api/db-status', (req, res) => {
+  let hasPlaceholders = false;
+  let placeholderWarning = null;
+
+  if (MONGODB_URI) {
+    const hasAngleBrackets = MONGODB_URI.includes('<') || MONGODB_URI.includes('>');
+    const hasSquareBrackets = MONGODB_URI.includes('[') || MONGODB_URI.includes(']');
+    const hasLiteralWord = MONGODB_URI.includes('username') || MONGODB_URI.includes('password');
+    if (hasAngleBrackets || hasSquareBrackets || hasLiteralWord) {
+      hasPlaceholders = true;
+      placeholderWarning = "Your Vercel environment variable MONGODB_URI contains placeholder brackets like '<username>' or '<password>'. Please go to your Vercel Project Dashboard under Settings > Environment Variables, edit the MONGODB_URI variable to replace the placeholders with your actual MongoDB Atlas database user credentials, save, and redeploy!";
+    }
+  }
+
   res.json({
     status: isMemoryDatabase ? 'fallback' : 'connected',
     provider: isMemoryDatabase ? 'Temporary In-Memory Datastore' : 'MongoDB Atlas Cloud Database',
@@ -1077,7 +1095,14 @@ app.get('/api/db-status', (req, res) => {
     host: connectedDbHost,
     collections: existingCollections,
     error: lastDbError ? (lastDbError.message || String(lastDbError)) : null,
-    errorDetails: lastDbError
+    errorDetails: lastDbError,
+    diagnostics: {
+      hasUri: !!MONGODB_URI,
+      isCustomDevUri: isCustomDevUri,
+      hasPlaceholders: hasPlaceholders,
+      placeholderWarning: placeholderWarning,
+      atlasIpWhitelistHint: "If fallback status persists with correct credentials, ensure that you have whitelisted access from all IPs (0.0.0.0/0) in your MongoDB Atlas Security settings (Network Access), since Vercel's Serverless Functions utilize dynamic IP addresses."
+    }
   });
 });
 
