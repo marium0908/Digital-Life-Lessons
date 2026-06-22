@@ -289,8 +289,8 @@ async function connectToDatabase() {
       console.log(`[DATABASE STARTUP] Connecting to MongoDB Atlas using:`, finalUri.replace(/:([^:@\/\?]+)@/, ':******@'));
       
       await mongoose.connect(finalUri, {
-        serverSelectionTimeoutMS: 8000,
-        connectTimeoutMS: 8000,
+        serverSelectionTimeoutMS: 2500,
+        connectTimeoutMS: 2500,
         maxPoolSize: 10,
         minPoolSize: 0,
         socketTimeoutMS: 45000,
@@ -326,8 +326,8 @@ async function connectToDatabase() {
       console.error('[DATABASE STARTUP] Connection to MongoDB failed, trying raw URI direct connection:', err.message);
       try {
         await mongoose.connect(MONGODB_URI, {
-          serverSelectionTimeoutMS: 8000,
-          connectTimeoutMS: 8000,
+          serverSelectionTimeoutMS: 2500,
+          connectTimeoutMS: 2500,
           maxPoolSize: 10,
           minPoolSize: 0,
           socketTimeoutMS: 45000,
