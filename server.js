@@ -8,6 +8,10 @@ import path from 'path';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import dns from 'dns';
+import { betterAuth } from 'better-auth';
+import { mongodbAdapter } from 'better-auth/adapters/mongodb';
+import { toNodeHandler } from 'better-auth/node';
+
 
 dotenv.config();
 
@@ -1110,6 +1114,47 @@ app.get('/api/db-status', (req, res) => {
     host: mongoose.connection.host || null,
     collections: mongoose.connection.db ? Object.keys(mongoose.connection.collections) : []
   });
+});
+
+// --- Better Auth Server Integration ---
+let betterAuthHandler = null;
+
+function initBetterAuth() {
+  if (betterAuthHandler) return betterAuthHandler;
+  try {
+    const rawDb = mongoose.connection && mongoose.connection.db;
+    if (rawDb) {
+      const auth = betterAuth({
+        database: mongodbAdapter(rawDb),
+        secret: process.env.BETTER_AUTH_SECRET || 'a_very_secure_secret_at_least_32_characters_long_for_default',
+        baseURL: process.env.BETTER_AUTH_URL || process.env.APP_URL || 'http://localhost:3000',
+        emailAndPassword: {
+          enabled: true
+        }
+      });
+      betterAuthHandler = toNodeHandler(auth);
+      console.log('[BETTER-AUTH] Successfully initialized Better Auth with MongoDB Adapter.');
+      return betterAuthHandler;
+    }
+  } catch (err) {
+    console.error('[BETTER-AUTH] Failed to initialize Better Auth:', err.message);
+  }
+  return null;
+}
+
+// Integrated Better Auth Express routing middleware
+app.all('/api/auth/*', (req, res, next) => {
+  const customEndpoints = ['/api/auth/register', '/api/auth/login', '/api/auth/google-login', '/api/auth/profile', '/api/auth/google-config'];
+  const reqUrl = req.originalUrl.split('?')[0];
+  if (customEndpoints.includes(reqUrl)) {
+    return next();
+  }
+  
+  const handler = initBetterAuth();
+  if (handler) {
+    return handler(req, res);
+  }
+  next();
 });
 
 // 1. Auth API Endpoints
