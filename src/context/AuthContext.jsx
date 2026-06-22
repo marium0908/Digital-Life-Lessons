@@ -5,7 +5,6 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import GoogleAuthModal from '../components/GoogleAuthModal';
-import { authClient } from '../lib/auth';
 
 
 const AuthContext = createContext(undefined);
