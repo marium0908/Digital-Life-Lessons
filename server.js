@@ -116,7 +116,7 @@ async function tryResolveSrvAndRewrite(uri) {
       console.log(`[SRV RESOLVER] Node DNS lookup failed (${nodeDnsErr.message}). Attempting secure DNS-over-HTTPS (DoH) via Google API over Port 443...`);
       try {
         const dohUrl = `https://dns.google/resolve?name=${encodeURIComponent(srvRecordName)}&type=SRV`;
-        const resp = await fetch(dohUrl);
+        const resp = await fetch(dohUrl, { signal: AbortSignal.timeout(1000) });
         if (!resp.ok) throw new Error(`Google DoH returned status ${resp.status}`);
         const resJson = await resp.json();
         if (resJson.Answer && resJson.Answer.length > 0) {
@@ -144,7 +144,7 @@ async function tryResolveSrvAndRewrite(uri) {
       console.log(`[SRV RESOLVER] Google DoH failed or returned no results. Trying Cloudflare DNS-over-HTTPS API...`);
       try {
         const dohUrl = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(srvRecordName)}&type=SRV`;
-        const resp = await fetch(dohUrl, { headers: { 'Accept': 'application/dns-json' } });
+        const resp = await fetch(dohUrl, { headers: { 'Accept': 'application/dns-json' }, signal: AbortSignal.timeout(1000) });
         if (resp.ok) {
           const resJson = await resp.json();
           if (resJson.Answer && resJson.Answer.length > 0) {
@@ -186,7 +186,7 @@ async function tryResolveSrvAndRewrite(uri) {
       console.log(`[SRV RESOLVER] Node TXT lookup failed (${nodeTxtErr.message}). Attempting secure DNS-over-HTTPS (DoH) via Google API over Port 443...`);
       try {
         const dohUrl = `https://dns.google/resolve?name=${encodeURIComponent(host)}&type=TXT`;
-        const resp = await fetch(dohUrl);
+        const resp = await fetch(dohUrl, { signal: AbortSignal.timeout(1000) });
         if (resp.ok) {
           const resJson = await resp.json();
           if (resJson.Answer && resJson.Answer.length > 0) {
@@ -209,7 +209,7 @@ async function tryResolveSrvAndRewrite(uri) {
       console.log(`[SRV RESOLVER] Google DoH TXT failed. Trying Cloudflare DNS-over-HTTPS TXT API...`);
       try {
         const dohUrl = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(host)}&type=TXT`;
-        const resp = await fetch(dohUrl, { headers: { 'Accept': 'application/dns-json' } });
+        const resp = await fetch(dohUrl, { headers: { 'Accept': 'application/dns-json' }, signal: AbortSignal.timeout(1000) });
         if (resp.ok) {
           const resJson = await resp.json();
           if (resJson.Answer && resJson.Answer.length > 0) {
@@ -267,11 +267,17 @@ async function tryResolveSrvAndRewrite(uri) {
 }
 
 let dbConnectionPromise = null;
+let lastConnectionAttemptTime = 0;
 
 async function connectToDatabase() {
   if (mongoose.connection.readyState === 1) {
     hasDatabaseLoaded = true;
     isMemoryDatabase = false;
+    return;
+  }
+
+  const now = Date.now();
+  if (isMemoryDatabase && (now - lastConnectionAttemptTime < 30000)) {
     return;
   }
 
@@ -283,6 +289,7 @@ async function connectToDatabase() {
     return dbConnectionPromise;
   }
 
+  lastConnectionAttemptTime = now;
   dbConnectionPromise = (async () => {
     try {
       const finalUri = await tryResolveSrvAndRewrite(MONGODB_URI);
@@ -651,7 +658,18 @@ function matchFilter(item, filter) {
   for (const key of Object.keys(filter)) {
     if (key === '$or') {
       const conds = filter[key];
-      return conds.some(cond => matchFilter(item, cond));
+      if (!conds.some(cond => matchFilter(item, cond))) {
+        return false;
+      }
+      continue;
+    }
+
+    if (key === '$and') {
+      const conds = filter[key];
+      if (!conds.every(cond => matchFilter(item, cond))) {
+        return false;
+      }
+      continue;
     }
     
     let filterVal = filter[key];
@@ -661,7 +679,7 @@ function matchFilter(item, filter) {
       itemVal = item.id;
     }
     
-    if (filterVal && typeof filterVal === 'object') {
+    if (filterVal && typeof filterVal === 'object' && !Array.isArray(filterVal)) {
       if (filterVal.$regex) {
         const regex = new RegExp(filterVal.$regex, filterVal.$options || 'i');
         if (!regex.test(String(itemVal || ''))) return false;
